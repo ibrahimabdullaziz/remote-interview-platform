@@ -1,3 +1,18 @@
+import { Button } from "@/components/ui/button";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { LogIn, LogOut, User } from "lucide-react";
+
 export default function Home() {
-  return <div className="p-10 flex flex-col gap-4 h-screen">Home Page</div>;
+  return (
+    <div>
+      <SignedOut>
+        <SignInButton>
+          <Button>Sign In</Button>
+        </SignInButton>
+      </SignedOut>
+      <SignedIn>
+        <UserButton />
+      </SignedIn>
+    </div>
+  );
 }
