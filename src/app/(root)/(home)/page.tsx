@@ -7,7 +7,7 @@ import { useQuery } from "convex/react";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { useRouter } from "next/navigation";
-import MeetingModal from "@/components/MeetingModal";
+import MeetingModal from "@/components/meetings/MeetingModal";
 
 export default function Home() {
   const router = useRouter();
