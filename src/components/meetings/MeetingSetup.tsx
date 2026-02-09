@@ -17,19 +17,29 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
 
   if (!call) return null;
 
-  useEffect(() => {
-    if (isCameraDisabled) call.camera.disable();
-    else call.camera.enable();
-  }, [isCameraDisabled, call.camera]);
+  const [isJoining, setIsJoining] = useState(false);
 
   useEffect(() => {
-    if (isMicDisabled) call.microphone.disable();
-    else call.microphone.enable();
-  }, [isMicDisabled, call.microphone]);
+    if (isCameraDisabled) call?.camera.disable();
+    else call?.camera.enable().catch(console.error);
+  }, [isCameraDisabled, call?.camera]);
+
+  useEffect(() => {
+    if (isMicDisabled) call?.microphone.disable();
+    else call?.microphone.enable().catch(console.error);
+  }, [isMicDisabled, call?.microphone]);
 
   const handleJoin = async () => {
-    await call.join();
-    onSetupComplete();
+    if (isJoining) return;
+    setIsJoining(true);
+
+    try {
+      await call.join();
+      onSetupComplete();
+    } catch (error) {
+      console.error("Failed to join meeting", error);
+      setIsJoining(false);
+    }
   };
 
   return (

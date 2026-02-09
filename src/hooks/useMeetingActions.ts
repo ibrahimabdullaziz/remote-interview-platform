@@ -13,6 +13,10 @@ const useMeetingActions = () => {
       const id = crypto.randomUUID();
       const call = client.call("default", id);
 
+      if (!call) throw new Error("Failed to create call object");
+
+      console.log("Creating meeting with ID:", id);
+
       await call.getOrCreate({
         data: {
           starts_at: new Date().toISOString(),
