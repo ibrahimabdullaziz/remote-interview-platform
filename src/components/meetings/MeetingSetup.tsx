@@ -12,22 +12,21 @@ import { Button } from "../ui/button";
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
   const [isMicDisabled, setIsMicDisabled] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
 
   const call = useCall();
 
-  if (!call) return null;
-
-  const [isJoining, setIsJoining] = useState(false);
-
   useEffect(() => {
-    if (isCameraDisabled) call?.camera.disable();
-    else call?.camera.enable().catch(console.error);
+    if (isCameraDisabled) call?.camera?.disable();
+    else call?.camera?.enable().catch(console.error);
   }, [isCameraDisabled, call?.camera]);
 
   useEffect(() => {
-    if (isMicDisabled) call?.microphone.disable();
-    else call?.microphone.enable().catch(console.error);
+    if (isMicDisabled) call?.microphone?.disable();
+    else call?.microphone?.enable().catch(console.error);
   }, [isMicDisabled, call?.microphone]);
+
+  if (!call) return null;
 
   const handleJoin = async () => {
     if (isJoining) return;

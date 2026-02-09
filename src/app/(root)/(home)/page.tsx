@@ -3,9 +3,9 @@
 import ActionCard from "@/components/ActionCard";
 import { QUICK_ACTIONS } from "@/constants";
 import { useUserRole } from "@/hooks/useUserRole";
-import { useQuery } from "convex/react";
+
 import { useState } from "react";
-import { api } from "../../../../convex/_generated/api";
+
 import { useRouter } from "next/navigation";
 import MeetingModal from "@/components/meetings/MeetingModal";
 
@@ -13,7 +13,7 @@ export default function Home() {
   const router = useRouter();
 
   const { isInterviewer, isLoading } = useUserRole();
-  const interviews = useQuery(api.interviews.getMyInterviews);
+
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<"start" | "join">();
 
