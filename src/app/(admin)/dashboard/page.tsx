@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { INTERVIEW_CATEGORY } from "@/constants";
 import { Badge } from "@/components/ui/badge";
+import CommentDialog from "@/components/CommentDialog";
 import {
   Card,
   CardContent,
@@ -146,6 +147,7 @@ function DashboardPage() {
                                 </Button>
                               </div>
                             )}
+                            <CommentDialog interviewId={interview._id} />
                           </CardFooter>
                         </Card>
                       );
