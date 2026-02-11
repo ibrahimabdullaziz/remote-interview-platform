@@ -1,5 +1,4 @@
 import { CODING_QUESTIONS, LANGUAGES } from "@/constants";
-import Image from "next/image";
 import { useState } from "react";
 import {
   ResizableHandle,
@@ -39,7 +38,10 @@ function CodeEditor() {
   };
 
   return (
-    <ResizablePanelGroup className="min-h-[calc-100vh-4rem-1px]">
+    <ResizablePanelGroup
+      direction="vertical"
+      className="min-h-[calc-100vh-4rem-1px]"
+    >
       {/* QUESTION SECTION */}
       <ResizablePanel>
         <ScrollArea className="h-full">
@@ -79,11 +81,9 @@ function CodeEditor() {
                       {/* SELECT VALUE */}
                       <SelectValue>
                         <div className="flex items-center gap-2">
-                          <Image
+                          <img
                             src={`/${language}.png`}
                             alt={language}
-                            width={20}
-                            height={20}
                             className="w-5 h-5 object-contain"
                           />
                           {LANGUAGES.find((l) => l.id === language)?.name}
@@ -95,11 +95,9 @@ function CodeEditor() {
                       {LANGUAGES.map((lang) => (
                         <SelectItem key={lang.id} value={lang.id}>
                           <div className="flex items-center gap-2">
-                            <Image
+                            <img
                               src={`/${lang.id}.png`}
                               alt={lang.name}
-                              width={20}
-                              height={20}
                               className="w-5 h-5 object-contain"
                             />
                             {lang.name}

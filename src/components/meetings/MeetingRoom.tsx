@@ -42,7 +42,7 @@ function MeetingRoom() {
 
   return (
     <div className="h-[calc(100vh-4rem-1px)]">
-      <ResizablePanelGroup className="h-full">
+      <ResizablePanelGroup direction="horizontal">
         <ResizablePanel
           defaultSize={35}
           minSize={25}
@@ -50,12 +50,12 @@ function MeetingRoom() {
           className="relative"
         >
           {/* VIDEO LAYOUT */}
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 pointer-events-none">
             {layout === "grid" ? <PaginatedGridLayout /> : <SpeakerLayout />}
 
             {/* PARTICIPANTS LIST OVERLAY */}
             {showParticipants && (
-              <div className="absolute right-0 top-0 h-full w-[300px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <div className="absolute right-0 top-0 h-full w-[300px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pointer-events-auto">
                 <CallParticipantsList
                   onClose={() => setShowParticipants(false)}
                 />
@@ -65,7 +65,7 @@ function MeetingRoom() {
 
           {/* VIDEO CONTROLS */}
 
-          <div className="absolute bottom-4 left-0 right-0">
+          <div className="absolute bottom-4 left-0 right-0 pointer-events-auto">
             <div className="flex flex-col items-center gap-4">
               <div className="flex items-center gap-2 flex-wrap justify-center px-4">
                 <CallControls onLeave={() => router.push("/")} />

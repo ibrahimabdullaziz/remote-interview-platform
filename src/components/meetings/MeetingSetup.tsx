@@ -8,37 +8,38 @@ import { Card } from "../ui/card";
 import { CameraIcon, MicIcon, SettingsIcon } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Button } from "../ui/button";
+import LoaderUI from "../LoaderUI";
 
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
   const [isMicDisabled, setIsMicDisabled] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
 
   const call = useCall();
 
   useEffect(() => {
-    if (isCameraDisabled) call?.camera?.disable();
-    else call?.camera?.enable().catch(console.error);
-  }, [isCameraDisabled, call?.camera]);
+    if (!call) return;
+
+    if (isCameraDisabled) call.camera.disable();
+    else call.camera.enable();
+  }, [isCameraDisabled, call?.camera, call]);
 
   useEffect(() => {
-    if (isMicDisabled) call?.microphone?.disable();
-    else call?.microphone?.enable().catch(console.error);
-  }, [isMicDisabled, call?.microphone]);
+    if (!call) return;
 
-  if (!call) return null;
+    if (isMicDisabled) call.microphone.disable();
+    else call.microphone.enable();
+  }, [isMicDisabled, call?.microphone, call]);
 
+  if (!call) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <LoaderUI />
+      </div>
+    );
+  }
   const handleJoin = async () => {
-    if (isJoining) return;
-    setIsJoining(true);
-
-    try {
-      await call.join();
-      onSetupComplete();
-    } catch (error) {
-      console.error("Failed to join meeting", error);
-      setIsJoining(false);
-    }
+    await call.join();
+    onSetupComplete();
   };
 
   return (

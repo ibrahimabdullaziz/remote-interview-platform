@@ -22,6 +22,7 @@ function MeetingModal({
 
   const handleStart = () => {
     if (isJoinMeeting) {
+      // if it's a full URL extract meeting ID
       const meetingId = meetingUrl.split("/").pop();
       if (meetingId) joinMeeting(meetingId);
     } else {
