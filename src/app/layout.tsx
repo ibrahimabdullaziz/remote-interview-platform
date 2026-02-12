@@ -7,9 +7,9 @@ import {
   SignedIn,
   SignedOut,
 } from "@clerk/nextjs";
-import { ThemeProvider } from "@/providers/ThemeProvider";
+import { ThemeProvider } from "../providers/ThemeProvider";
 import Navbar from "../layout/Navbar";
-import ConvexClerkProvider from "@/providers/ConvexClerkProvider";
+import ConvexClerkProvider from "../providers/ConvexClerkProvider";
 import { Toaster } from "react-hot-toast";
 
 const geistSans = localFont({
