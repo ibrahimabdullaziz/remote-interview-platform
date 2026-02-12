@@ -9,8 +9,8 @@ import { api } from "../../../../convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { MeetingModal } from "@/components/meetings";
 import { LoaderUI } from "@/components/common";
-import { Loader2Icon } from "lucide-react";
 import { MeetingCard } from "@/components/interviews";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Home() {
   const router = useRouter();
@@ -79,8 +79,10 @@ export default function Home() {
 
           <div className="mt-8">
             {interviews === undefined ? (
-              <div className="flex justify-center py-12">
-                <Loader2Icon className="h-8 w-8 animate-spin text-muted-foreground" />
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, index) => (
+                  <Skeleton key={index} className="h-40 w-full rounded-xl" />
+                ))}
               </div>
             ) : interviews.length > 0 ? (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

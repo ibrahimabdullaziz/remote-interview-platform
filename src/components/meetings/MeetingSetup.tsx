@@ -10,6 +10,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
   const [isMicDisabled, setIsMicDisabled] = useState(false);
   const [isDeviceReady, setIsDeviceReady] = useState(false);
+  const [deviceError, setDeviceError] = useState<string | null>(null);
 
   const call = useCall();
 
@@ -36,8 +37,12 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
         } else {
           await call.camera.enable();
         }
+        setDeviceError(null);
       } catch (error) {
         console.error("Camera operation failed:", error);
+        setDeviceError(
+          "We couldn't access your camera. Check your browser permissions and device settings.",
+        );
       }
     };
 
@@ -55,8 +60,12 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
         } else {
           await call.microphone.enable();
         }
+        setDeviceError(null);
       } catch (error) {
         console.error("Microphone operation failed:", error);
+        setDeviceError(
+          "We couldn't access your microphone. Check your browser permissions and device settings.",
+        );
       }
     };
 
@@ -110,6 +119,12 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
               </div>
 
               <div className="flex-1 flex flex-col justify-between">
+                {deviceError && (
+                  <div className="mt-4 rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+                    {deviceError}
+                  </div>
+                )}
+
                 <div className="spacey-6 mt-8">
                   {/* CAM CONTROL */}
                   <div className="flex items-center justify-between">

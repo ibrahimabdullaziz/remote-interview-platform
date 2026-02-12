@@ -7,6 +7,7 @@ import {
   useCallStateHooks,
 } from "@stream-io/video-react-sdk";
 import { LayoutListIcon, LoaderIcon, UsersIcon } from "lucide-react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -21,7 +22,16 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { EndCallButton, CodeEditor } from "@/components/meetings";
+import { EndCallButton } from "@/components/meetings";
+
+const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full flex items-center justify-center">
+      <LoaderIcon className="size-6 animate-spin text-muted-foreground" />
+    </div>
+  ),
+});
 
 function MeetingRoom() {
   const router = useRouter();

@@ -4,7 +4,6 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import toast from "react-hot-toast";
-import { LoaderUI } from "@/components/common";
 import { getCandidateInfo, groupInterviews } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -26,6 +25,7 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Interview = Doc<"interviews">;
 
@@ -46,7 +46,20 @@ function DashboardPage() {
     }
   };
 
-  if (!interviews || !users) return <LoaderUI />;
+  if (!interviews || !users) {
+    return (
+      <div className="container mx-auto py-10">
+        <div className="flex items-center mb-8">
+          <Skeleton className="h-10 w-40" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Skeleton key={index} className="h-40 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const groupedInterviews = groupInterviews(interviews);
 

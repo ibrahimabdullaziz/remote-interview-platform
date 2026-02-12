@@ -11,4 +11,5 @@ export * from "./calendar";
 export * from "./scroll-area";
 export * from "./switch";
 export * from "./resizable";
+export * from "./skeleton";
 

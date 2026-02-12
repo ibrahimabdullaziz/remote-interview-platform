@@ -1,8 +1,8 @@
 "use client";
 
-import { LoaderUI } from "@/components/common";
 import { RecordingCard } from "@/components/recordings";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
 import useGetCalls from "@/hooks/useGetCalls";
 import { CallRecording } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
@@ -31,7 +31,19 @@ function RecordingsPage() {
     fetchRecordings();
   }, [calls]);
 
-  if (isLoading) return <LoaderUI />;
+  if (isLoading) {
+    return (
+      <div className="container max-w-7xl mx-auto p-6">
+        <Skeleton className="h-8 w-40 mb-4" />
+        <Skeleton className="h-4 w-64 mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <Skeleton key={index} className="h-40 w-full rounded-xl" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container max-w-7xl mx-auto p-6">
