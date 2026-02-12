@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { ActionCard } from "@/components/home";
 import { QUICK_ACTIONS } from "@/constants";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -7,10 +8,16 @@ import { useQuery } from "convex/react";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
 import { useRouter } from "next/navigation";
-import { MeetingModal } from "@/components/meetings";
 import { LoaderUI } from "@/components/common";
 import { MeetingCard } from "@/components/interviews";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const MeetingModal = dynamic(
+  () => import("@/components/meetings/MeetingModal"),
+  {
+    ssr: false,
+  },
+);
 
 export default function Home() {
   const router = useRouter();
@@ -39,7 +46,6 @@ export default function Home() {
 
   return (
     <div className="container max-w-7xl mx-auto p-6">
-      {/* WELCOME SECTION */}
       <div className="rounded-lg bg-card p-6 border shadow-sm mb-10">
         <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
           Welcome back!

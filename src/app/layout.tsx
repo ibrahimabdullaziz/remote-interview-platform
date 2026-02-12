@@ -6,7 +6,6 @@ import {
   RedirectToSignIn,
   SignedIn,
   SignedOut,
-  SignOutButton,
 } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import Navbar from "../layout/Navbar";
@@ -50,7 +49,6 @@ export default function RootLayout({
               <div className="min-h-screen">
                 <Navbar />
                 <main className="px-4 sm:px-6 lg:px-8">{children}</main>
-                <SignOutButton />
               </div>
             </SignedIn>
 
