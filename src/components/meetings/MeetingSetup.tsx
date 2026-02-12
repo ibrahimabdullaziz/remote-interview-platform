@@ -1,6 +1,7 @@
 import {
   DeviceSettings,
   useCall,
+  useCallStateHooks,
   VideoPreview,
 } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
@@ -8,27 +9,66 @@ import { Card } from "../ui/card";
 import { CameraIcon, MicIcon, SettingsIcon } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { Button } from "../ui/button";
-import LoaderUI from "../LoaderUI";
+import { LoaderUI } from "@/components/common";
 
 function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isCameraDisabled, setIsCameraDisabled] = useState(true);
   const [isMicDisabled, setIsMicDisabled] = useState(false);
+  const [isDeviceReady, setIsDeviceReady] = useState(false);
 
   const call = useCall();
+  const { useCallCallingState } = useCallStateHooks();
+  const callingState = useCallCallingState();
 
+  // Wait for call to be ready before allowing device operations
   useEffect(() => {
     if (!call) return;
 
-    if (isCameraDisabled) call.camera.disable();
-    else call.camera.enable();
-  }, [isCameraDisabled, call?.camera, call]);
+    // Add a small delay to ensure SDK's device manager is initialized
+    const timer = setTimeout(() => {
+      setIsDeviceReady(true);
+    }, 500);
 
+    return () => clearTimeout(timer);
+  }, [call]);
+
+  // Handle camera enable/disable with proper checks
   useEffect(() => {
-    if (!call) return;
+    if (!call || !isDeviceReady) return;
 
-    if (isMicDisabled) call.microphone.disable();
-    else call.microphone.enable();
-  }, [isMicDisabled, call?.microphone, call]);
+    const updateCamera = async () => {
+      try {
+        if (isCameraDisabled) {
+          await call.camera.disable();
+        } else {
+          await call.camera.enable();
+        }
+      } catch (error) {
+        console.error("Camera operation failed:", error);
+      }
+    };
+
+    updateCamera();
+  }, [isCameraDisabled, call, isDeviceReady]);
+
+  // Handle microphone enable/disable with proper checks
+  useEffect(() => {
+    if (!call || !isDeviceReady) return;
+
+    const updateMicrophone = async () => {
+      try {
+        if (isMicDisabled) {
+          await call.microphone.disable();
+        } else {
+          await call.microphone.enable();
+        }
+      } catch (error) {
+        console.error("Microphone operation failed:", error);
+      }
+    };
+
+    updateMicrophone();
+  }, [isMicDisabled, call, isDeviceReady]);
 
   if (!call) {
     return (
@@ -37,6 +77,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
       </div>
     );
   }
+
   const handleJoin = async () => {
     await call.join();
     onSetupComplete();
@@ -95,6 +136,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                       onCheckedChange={(checked) =>
                         setIsCameraDisabled(!checked)
                       }
+                      disabled={!isDeviceReady}
                     />
                   </div>
 
@@ -114,6 +156,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                     <Switch
                       checked={!isMicDisabled}
                       onCheckedChange={(checked) => setIsMicDisabled(!checked)}
+                      disabled={!isDeviceReady}
                     />
                   </div>
 

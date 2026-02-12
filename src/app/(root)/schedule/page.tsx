@@ -1,6 +1,6 @@
-"use client";
+\"use client\";
 
-import LoaderUI from "@/components/LoaderUI";
+import { LoaderUI } from "@/components/common";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useRouter } from "next/navigation";
 import InterviewScheduleUI from "./InterviewScheduleUI";

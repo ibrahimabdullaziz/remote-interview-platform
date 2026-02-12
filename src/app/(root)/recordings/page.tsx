@@ -1,7 +1,7 @@
-"use client";
+\"use client\";
 
-import LoaderUI from "@/components/LoaderUI";
-import RecordingCard from "@/components/RecordingCard";
+import { LoaderUI } from "@/components/common";
+import { RecordingCard } from "@/components/recordings";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import useGetCalls from "@/hooks/useGetCalls";
 import { CallRecording } from "@stream-io/video-react-sdk";

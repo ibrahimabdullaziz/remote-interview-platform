@@ -21,8 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import EndCallButton from "../EndCallButton";
-import CodeEditor from "../CodeEditor";
+import { EndCallButton, CodeEditor } from "@/components/meetings";
 
 function MeetingRoom() {
   const router = useRouter();

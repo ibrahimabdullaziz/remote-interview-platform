@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
 import { CodeIcon } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import DashboardBtn from "@/components/DashboardBtn";
+import { DashboardBtn } from "@/components/dashboard";
 import { Button } from "@/components/ui/button";
 
 function Navbar() {

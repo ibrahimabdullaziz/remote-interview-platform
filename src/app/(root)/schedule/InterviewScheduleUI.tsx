@@ -8,6 +8,7 @@ import {
   Dialog,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogTrigger,
   DialogContent,
 } from "@/components/ui/dialog";
@@ -21,11 +22,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import UserInfo from "@/components/UserInfo";
+import { UserInfo } from "@/components/common";
 import { Loader2Icon, XIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { TIME_SLOTS } from "@/constants";
-import MeetingCard from "@/components/MeetingCard";
+import { MeetingCard } from "@/components/interviews";
 
 function InterviewScheduleUI() {
   const client = useStreamVideoClient();
@@ -76,6 +77,9 @@ function InterviewScheduleUI() {
             additionalDetails: description,
           },
         },
+        ring: false,
+        notify: false,
+        members_limit: 10,
       });
 
       await createInterview({
@@ -153,6 +157,9 @@ function InterviewScheduleUI() {
           <DialogContent className="sm:max-w-[500px] h-[calc(100vh-200px)] overflow-auto">
             <DialogHeader>
               <DialogTitle>Schedule Interview</DialogTitle>
+              <DialogDescription>
+                Create a new interview session with candidates and interviewers.
+              </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               {/* INTERVIEW TITLE */}

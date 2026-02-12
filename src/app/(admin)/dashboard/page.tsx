@@ -1,16 +1,16 @@
-"use client";
+\"use client\";
 
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import toast from "react-hot-toast";
-import LoaderUI from "@/components/LoaderUI";
+import { LoaderUI } from "@/components/common";
 import { getCandidateInfo, groupInterviews } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { INTERVIEW_CATEGORY } from "@/constants";
 import { Badge } from "@/components/ui/badge";
-import CommentDialog from "@/components/CommentDialog";
+import { CommentDialog } from "@/components/interviews";
 import {
   Card,
   CardContent,

@@ -1,9 +1,9 @@
-"use client";
+\"use client\";
 
 import { ReactNode, useEffect, useState } from "react";
 import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
-import LoaderUI from "@/components/LoaderUI";
+import { LoaderUI } from "@/components/common";
 import { streamTokenProvider } from "@/actions/stream.actions";
 
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
