@@ -1,4 +1,4 @@
-\"use client\";
+"use client";
 
 import { LoaderUI } from "@/components/common";
 import { MeetingRoom, MeetingSetup } from "@/components/meetings";

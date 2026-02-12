@@ -1,4 +1,4 @@
-\"use client\";
+"use client";
 
 import { LoaderUI } from "@/components/common";
 import { useUserRole } from "@/hooks/useUserRole";

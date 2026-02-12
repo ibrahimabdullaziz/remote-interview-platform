@@ -1,9 +1,4 @@
-import {
-  DeviceSettings,
-  useCall,
-  useCallStateHooks,
-  VideoPreview,
-} from "@stream-io/video-react-sdk";
+import { DeviceSettings, useCall, VideoPreview } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
 import { Card } from "../ui/card";
 import { CameraIcon, MicIcon, SettingsIcon } from "lucide-react";
@@ -17,8 +12,6 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isDeviceReady, setIsDeviceReady] = useState(false);
 
   const call = useCall();
-  const { useCallCallingState } = useCallStateHooks();
-  const callingState = useCallCallingState();
 
   // Wait for call to be ready before allowing device operations
   useEffect(() => {

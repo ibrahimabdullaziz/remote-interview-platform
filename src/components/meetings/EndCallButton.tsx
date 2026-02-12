@@ -1,8 +1,8 @@
 import { useCall, useCallStateHooks } from "@stream-io/video-react-sdk";
 import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
-import { api } from "../../convex/_generated/api";
-import { Button } from "./ui/button";
+import { api } from "../../../convex/_generated/api";
+import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 
 function EndCallButton() {
@@ -49,3 +49,4 @@ function EndCallButton() {
   );
 }
 export default EndCallButton;
+

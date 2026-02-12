@@ -2,9 +2,9 @@ import { CallRecording } from "@stream-io/video-react-sdk";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { calculateRecordingDuration } from "@/lib/utils";
-import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { CalendarIcon, ClockIcon, CopyIcon, PlayIcon } from "lucide-react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 
 function RecordingCard({ recording }: { recording: CallRecording }) {
   const handleCopyLink = async () => {
@@ -71,3 +71,4 @@ function RecordingCard({ recording }: { recording: CallRecording }) {
   );
 }
 export default RecordingCard;
+

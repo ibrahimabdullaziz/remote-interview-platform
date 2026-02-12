@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import useMeetingActions from "@/hooks/useMeetingActions";
@@ -38,6 +38,11 @@ function MeetingModal({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>
+            {isJoinMeeting 
+              ? "Enter the meeting link to join an existing interview session." 
+              : "Create a new instant meeting for your interview."}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 pt-4">

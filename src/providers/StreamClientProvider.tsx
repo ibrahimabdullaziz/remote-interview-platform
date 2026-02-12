@@ -1,4 +1,4 @@
-\"use client\";
+"use client";
 
 import { ReactNode, useEffect, useState } from "react";
 import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-sdk";

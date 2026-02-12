@@ -1,5 +1,5 @@
 import useMeetingActions from "@/hooks/useMeetingActions";
-import { Doc } from "../../convex/_generated/dataModel";
+import { Doc } from "../../../convex/_generated/dataModel";
 import { getMeetingStatus } from "@/lib/utils";
 import { format } from "date-fns";
 import {
@@ -8,10 +8,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 import { CalendarIcon } from "lucide-react";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type Interview = Doc<"interviews">;
 
@@ -79,3 +79,4 @@ function MeetingCard({ interview }: { interview: Interview }) {
   );
 }
 export default MeetingCard;
+
