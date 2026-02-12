@@ -1,4 +1,8 @@
-import { DeviceSettings, useCall, VideoPreview } from "@stream-io/video-react-sdk";
+import {
+  DeviceSettings,
+  useCall,
+  VideoPreview,
+} from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
 import { Card } from "../ui/card";
 import { CameraIcon, MicIcon, SettingsIcon } from "lucide-react";
@@ -26,7 +30,6 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
     return () => clearTimeout(timer);
   }, [call]);
 
-  // Handle camera enable/disable with proper checks
   useEffect(() => {
     if (!call || !isDeviceReady) return;
 
@@ -49,7 +52,6 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
     updateCamera();
   }, [isCameraDisabled, call, isDeviceReady]);
 
-  // Handle microphone enable/disable with proper checks
   useEffect(() => {
     if (!call || !isDeviceReady) return;
 
@@ -192,7 +194,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                   </Button>
                   <p className="text-xs text-center text-muted-foreground">
                     Do not worry, our team is super friendly! We want you to
-                    succeed. 🎉
+                    succeed.
                   </p>
                 </div>
               </div>
