@@ -15,19 +15,24 @@ export function MeetingActionList() {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<"start" | "join">();
+  const [clickedAction, setClickedAction] = useState<string | null>(null);
 
   const handleQuickAction = (title: string) => {
+    setClickedAction(title);
     switch (title) {
       case "New Call":
         setModalType("start");
         setShowModal(true);
+        setClickedAction(null);
         break;
       case "Join Interview":
         setModalType("join");
         setShowModal(true);
+        setClickedAction(null);
         break;
       default:
         router.push(`/${title.toLowerCase()}`);
+        // Keep loading state until navigation occurs
     }
   };
 
@@ -39,6 +44,8 @@ export function MeetingActionList() {
             key={action.title}
             action={action}
             onClick={() => handleQuickAction(action.title)}
+            loading={clickedAction === action.title}
+            disabled={clickedAction !== null && clickedAction !== action.title}
           />
         ))}
       </div>
