@@ -47,16 +47,22 @@ export function ScheduleDialog({
   const [isCreating, setIsCreating] = useState(false);
   const createInterview = useMutation(api.interviews.createInterview);
 
-  const candidates = users?.filter((u) => u.role === "candidate");
-  const allInterviewers = users?.filter((u) => u.role === "interviewer");
+  const candidates = users?.filter((u) => u.role === "candidate") ?? [];
+  const allInterviewers = users?.filter((u) => u.role === "interviewer") ?? [];
 
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    date: new Date(),
-    time: "09:00",
-    candidateId: "",
-    interviewerIds: user?.id ? [user.id] : [],
+  const [formData, setFormData] = useState(() => {
+    const now = new Date();
+    now.setHours(now.getHours() + 1, 0, 0, 0);
+    const defaultTime = `${now.getHours().toString().padStart(2, "0")}:00`;
+
+    return {
+      title: "",
+      description: "",
+      date: new Date(),
+      time: defaultTime,
+      candidateId: "",
+      interviewerIds: user?.id ? [user.id] : [],
+    };
   });
 
   const handleSchedule = async () => {
@@ -74,6 +80,12 @@ export function ScheduleDialog({
       const [hours, minutes] = time.split(":");
       const meetingDate = new Date(date);
       meetingDate.setHours(parseInt(hours), parseInt(minutes), 0);
+
+      if (meetingDate.getTime() <= Date.now()) {
+        toast.error("Please select a future time for the interview");
+        setIsCreating(false);
+        return;
+      }
 
       const id = crypto.randomUUID();
       const call = client.call("default", id);
@@ -103,11 +115,16 @@ export function ScheduleDialog({
 
       onOpenChange(false);
       toast.success("Meeting scheduled successfully!");
+
+      const resetDate = new Date();
+      resetDate.setHours(resetDate.getHours() + 1, 0, 0, 0);
+      const resetTime = `${resetDate.getHours().toString().padStart(2, "0")}:00`;
+
       setFormData({
         title: "",
         description: "",
         date: new Date(),
-        time: "09:00",
+        time: resetTime,
         candidateId: "",
         interviewerIds: user?.id ? [user.id] : [],
       });

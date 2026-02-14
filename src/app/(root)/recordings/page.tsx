@@ -19,7 +19,6 @@ function RecordingsPage() {
 
       setIsFetchingRecordings(true);
       try {
-        // Get recordings for each call
         const callData = await Promise.all(
           calls.map((call) => call.queryRecordings()),
         );
@@ -52,14 +51,11 @@ function RecordingsPage() {
 
   return (
     <div className="container max-w-7xl mx-auto p-6">
-      {/* HEADER SECTION */}
       <h1 className="text-3xl font-bold">Recordings</h1>
       <p className="text-muted-foreground my-1">
         {recordings.length}{" "}
         {recordings.length === 1 ? "recording" : "recordings"} available
       </p>
-
-      {/* RECORDINGS GRID */}
 
       <ScrollArea className="h-[calc(100vh-12rem)] mt-3">
         {recordings.length > 0 ? (

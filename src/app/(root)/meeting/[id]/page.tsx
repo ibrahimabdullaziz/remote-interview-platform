@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { LoaderUI } from "@/components/common";
 import { ErrorBoundary, ErrorDisplay, createError } from "@/lib/errors";
-import { DashboardSkeleton } from "@/components/skeletons/DashboardSkeleton";
+import { ConferenceSkeleton } from "@/components/skeletons/ConferenceSkeleton";
 import useGetCallById from "@/hooks/useGetCallById";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
@@ -12,11 +12,11 @@ import { useState } from "react";
 
 const MeetingSetup = dynamic(
   () => import("@/components/meetings/MeetingSetup"),
-  { ssr: false, loading: () => <DashboardSkeleton /> },
+  { ssr: false, loading: () => <ConferenceSkeleton /> },
 );
 const MeetingRoom = dynamic(() => import("@/components/meetings/MeetingRoom"), {
   ssr: false,
-  loading: () => <DashboardSkeleton />,
+  loading: () => <ConferenceSkeleton />,
 });
 
 function MeetingPage() {

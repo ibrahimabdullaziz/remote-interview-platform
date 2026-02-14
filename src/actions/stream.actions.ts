@@ -18,13 +18,21 @@ export const streamTokenProvider = async () => {
       process.env.STREAM_SECRET_KEY!,
     );
 
-    const token = streamClient.generateUserToken({ user_id: user.id });
+    const now = Math.floor(Date.now() / 1000);
+    const issuedAt = now - 60;
+    const expiration = now + 3600;
+
+    const token = streamClient.generateUserToken({
+      user_id: user.id,
+      exp: expiration,
+      iat: issuedAt,
+    });
     return token;
   } catch (error) {
     const appError = createError(
       "STREAM_TOKEN_INVALID",
       error instanceof Error ? error : undefined,
-      { userId: user.id }
+      { userId: user.id },
     );
     throw appError;
   }

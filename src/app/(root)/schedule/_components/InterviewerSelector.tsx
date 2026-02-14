@@ -26,11 +26,11 @@ export function InterviewerSelector({
   onRemove,
   currentUserId,
 }: InterviewerSelectorProps) {
-  const selectedInterviewers = availableInterviewers.filter((i) =>
+  const selectedInterviewers = (availableInterviewers ?? []).filter((i) =>
     selectedIds.includes(i.clerkId),
   );
 
-  const selectableInterviewers = availableInterviewers.filter(
+  const selectableInterviewers = (availableInterviewers ?? []).filter(
     (i) => !selectedIds.includes(i.clerkId),
   );
 
