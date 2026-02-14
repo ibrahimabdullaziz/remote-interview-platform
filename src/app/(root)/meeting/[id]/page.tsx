@@ -38,7 +38,7 @@ function MeetingPage() {
     return (
       <ErrorDisplay
         error={notFoundError}
-        onRetry={() => router.push("/")}
+        onRetry={() => router.push("/meeting")}
         showIcon={true}
         className="h-screen"
       />

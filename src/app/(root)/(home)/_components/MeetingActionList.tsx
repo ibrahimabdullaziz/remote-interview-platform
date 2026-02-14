@@ -1,3 +1,5 @@
+"use client";
+
 import { ActionCard } from "@/components/home";
 import { QUICK_ACTIONS } from "@/constants";
 import { useRouter } from "next/navigation";

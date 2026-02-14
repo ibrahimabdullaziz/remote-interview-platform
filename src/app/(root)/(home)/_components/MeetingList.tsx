@@ -1,3 +1,5 @@
+"use client";
+
 import { MeetingCard } from "@/components/interviews";
 import { MeetingListSkeleton } from "@/components/skeletons/MeetingListSkeleton";
 import { useQuery } from "convex/react";
