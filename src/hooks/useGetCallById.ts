@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
-import { handleUnknownError } from "@/lib/errorHandler";
+import { handleUnknownError } from "@/lib/errors";
 
 const useGetCallById = (id: string | string[]) => {
   const [call, setCall] = useState<Call>();

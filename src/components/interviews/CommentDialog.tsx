@@ -3,7 +3,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
-import { withErrorHandling } from "@/lib/errorHandler";
+import { withErrorHandling } from "@/lib/errors";
 import { MessageSquareIcon, StarIcon } from "lucide-react";
 import {
   Dialog,

@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import toast from "react-hot-toast";
-import { withErrorHandling, createError } from "@/lib/errorHandler";
+import { withErrorHandling, createError } from "@/lib/errors";
 
 const useMeetingActions = () => {
   const router = useRouter();

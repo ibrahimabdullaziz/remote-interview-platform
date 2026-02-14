@@ -17,7 +17,7 @@ import { api } from "../../../../../convex/_generated/api"
 import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
-import { withErrorHandling } from "@/lib/errorHandler";
+import { withErrorHandling } from "@/lib/errors";
 
 type Interview = Doc<"interviews">;
 

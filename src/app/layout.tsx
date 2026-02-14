@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import Navbar from "@/layout/Navbar";
 import ConvexClerkProvider from "@/providers/ConvexClerkProvider";
 import { Toaster } from "react-hot-toast";
-import { errorHandler } from "@/lib/errorHandler";
+import { errorHandler, ErrorBoundary } from "@/lib/errors";
 import toast from "react-hot-toast";
 
 // Configure global error handling
@@ -51,16 +51,18 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <SignedIn>
-              <div className="min-h-screen">
-                <Navbar />
-                <main className="px-4 sm:px-6 lg:px-8">{children}</main>
-              </div>
-            </SignedIn>
+            <ErrorBoundary>
+              <SignedIn>
+                <div className="min-h-screen">
+                  <Navbar />
+                  <main className="px-4 sm:px-6 lg:px-8">{children}</main>
+                </div>
+              </SignedIn>
 
-            <SignedOut>
-              <RedirectToSignIn />
-            </SignedOut>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </ErrorBoundary>
           </ThemeProvider>
           <Toaster />
         </body>

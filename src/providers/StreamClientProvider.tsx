@@ -5,8 +5,7 @@ import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
 import { LoaderUI } from "@/components/common";
 import { streamTokenProvider } from "@/actions/stream.actions";
-import { handleUnknownError, getErrorMessage, type AppError } from "@/lib/errorHandler";
-import { ErrorDisplay } from "@/components/common/ErrorDisplay";
+import { handleUnknownError, getErrorMessage, ErrorDisplay, type AppError } from "@/lib/errors";
 
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [streamVideoClient, setStreamVideoClient] =

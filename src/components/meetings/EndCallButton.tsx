@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { withErrorHandling } from "@/lib/errorHandler";
+import { withErrorHandling } from "@/lib/errors";
 
 function EndCallButton() {
   const call = useCall();

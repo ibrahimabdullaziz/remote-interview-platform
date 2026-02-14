@@ -2,7 +2,7 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import { StreamClient } from "@stream-io/node-sdk";
-import { createError } from "@/lib/errorHandler";
+import { createError } from "@/lib/errors";
 
 export const streamTokenProvider = async () => {
   const user = await currentUser();
