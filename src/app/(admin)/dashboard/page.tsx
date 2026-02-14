@@ -1,11 +1,7 @@
 "use client";
 
-import { useQuery } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
-import { DashboardSkeleton } from "@/components/skeletons/DashboardSkeleton";
 import { Header } from "./_components/Header";
 import { InterviewList } from "./_components/InterviewList";
-
 import { useUserRole } from "@/hooks/useUserRole";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

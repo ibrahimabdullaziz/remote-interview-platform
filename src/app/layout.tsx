@@ -40,11 +40,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ConvexClerkProvider>
-      <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ConvexClerkProvider>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -60,13 +60,15 @@ export default function RootLayout({
               </SignedIn>
 
               <SignedOut>
-                <RedirectToSignIn />
+                <div className="min-h-screen flex items-center justify-center">
+                  <RedirectToSignIn />
+                </div>
               </SignedOut>
             </ErrorBoundary>
           </ThemeProvider>
-          <Toaster />
-        </body>
-      </html>
-    </ConvexClerkProvider>
+        </ConvexClerkProvider>
+        <Toaster position="bottom-right" />
+      </body>
+    </html>
   );
 }

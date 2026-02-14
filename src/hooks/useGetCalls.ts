@@ -44,26 +44,26 @@ const useGetCalls = () => {
     return calls.filter(({ state: { startsAt, endedAt } }: Call) => {
       return (startsAt && new Date(startsAt) < now) || !!endedAt;
     });
-  }, [calls]);
+  }, [calls, now]);
 
   const upcomingCalls = useMemo(() => {
     return calls.filter(({ state: { startsAt } }: Call) => {
       return startsAt && new Date(startsAt) > now;
     });
-  }, [calls]);
+  }, [calls, now]);
 
   const liveCalls = useMemo(() => {
     return calls.filter(({ state: { startsAt, endedAt } }: Call) => {
       return startsAt && new Date(startsAt) < now && !endedAt;
     });
-  }, [calls]);
+  }, [calls, now]);
 
-  return { 
-    calls, 
-    endedCalls, 
-    upcomingCalls, 
-    liveCalls, 
-    isLoading: !isClerkLoaded || isCallsLoading 
+  return {
+    calls,
+    endedCalls,
+    upcomingCalls,
+    liveCalls,
+    isLoading: !isClerkLoaded || isCallsLoading,
   };
 };
 

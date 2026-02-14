@@ -8,14 +8,16 @@ const useGetCallById = (id: string | string[]) => {
 
   const client = useStreamVideoClient();
 
+  const callId = Array.isArray(id) ? id[0] : id;
+
   useEffect(() => {
-    if (!client || !id) return;
+    if (!client || !callId) return;
 
     const getCall = async () => {
-      setIsCallLoading(true); 
+      setIsCallLoading(true);
       try {
         const { calls } = await client.queryCalls({
-          filter_conditions: { id },
+          filter_conditions: { id: callId },
         });
 
         if (calls.length > 0) {
@@ -32,7 +34,7 @@ const useGetCallById = (id: string | string[]) => {
     };
 
     getCall();
-  }, [client, JSON.stringify(id)]);
+  }, [client, callId]);
 
   return { call, isCallLoading };
 };

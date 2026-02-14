@@ -17,18 +17,28 @@ import {
 import { CommentDialog } from "@/components/interviews";
 import { INTERVIEW_CATEGORY } from "@/constants";
 import { getCandidateInfo, groupInterviews } from "@/lib/utils";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, usePaginatedQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { withErrorHandling } from "@/lib/errors";
+import { DashboardSkeleton } from "@/components/skeletons/DashboardSkeleton";
 
 type Interview = Doc<"interviews">;
 
 export function InterviewList() {
-  const users = useQuery(api.users.getUsers);
-  const interviews = useQuery(api.interviews.getAllInterviews);
+  const { results: users, status: usersStatus } = usePaginatedQuery(
+    api.users.getUsers,
+    {},
+    { initialNumItems: 20 },
+  );
+  const { results: interviews, status: interviewsStatus } = usePaginatedQuery(
+    api.interviews.getAllInterviews,
+    {},
+    { initialNumItems: 20 },
+  );
+
   const updateStatus = useMutation(api.interviews.updateInterviewStatus);
   const removeInterview = useMutation(api.interviews.deleteInterview);
 
@@ -58,6 +68,13 @@ export function InterviewList() {
       { interviewId: id },
     );
   };
+
+  if (
+    usersStatus === "LoadingFirstPage" ||
+    interviewsStatus === "LoadingFirstPage"
+  ) {
+    return <DashboardSkeleton />;
+  }
 
   if (!interviews || !users) return null;
 

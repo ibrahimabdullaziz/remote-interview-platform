@@ -5,7 +5,12 @@ import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
 import { LoaderUI } from "@/components/common";
 import { streamTokenProvider } from "@/actions/stream.actions";
-import { handleUnknownError, getErrorMessage, ErrorDisplay, type AppError } from "@/lib/errors";
+import {
+  handleUnknownError,
+  getErrorMessage,
+  ErrorDisplay,
+  type AppError,
+} from "@/lib/errors";
 
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [streamVideoClient, setStreamVideoClient] =
@@ -16,37 +21,23 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!isLoaded || !user) return;
 
-    let client: StreamVideoClient | undefined;
+    const client = new StreamVideoClient({
+      apiKey: process.env.NEXT_PUBLIC_STREAM_API_KEY!,
+      user: {
+        id: user.id,
+        name:
+          user.firstName || user.lastName
+            ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
+            : user.id,
+        image: user.imageUrl,
+      },
+      tokenProvider: streamTokenProvider,
+    });
 
-    try {
-      client = new StreamVideoClient({
-        apiKey: process.env.NEXT_PUBLIC_STREAM_API_KEY!,
-        user: {
-          id: user.id,
-          name:
-            (user.firstName || "") +
-            " " +
-            (user.lastName || "") ||
-            user.id,
-          image: user.imageUrl,
-        },
-        tokenProvider: async () => {
-          const token = await streamTokenProvider();
-          return token;
-        },
-      });
-
-      setStreamVideoClient(client);
-      setError(null);
-    } catch (e) {
-      const appError = handleUnknownError(e);
-      setError(appError);
-    }
+    setStreamVideoClient(client);
 
     return () => {
-      if (client) {
-        client.disconnectUser().catch((e) => handleUnknownError(e));
-      }
+      client.disconnectUser();
       setStreamVideoClient(undefined);
     };
   }, [user?.id, isLoaded]);

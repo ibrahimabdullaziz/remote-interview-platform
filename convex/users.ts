@@ -46,14 +46,15 @@ export const updateUser = mutation({
   },
 });
 
+import { paginationOptsValidator } from "convex/server";
+
 export const getUsers = query({
-  handler: async (ctx) => {
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("User is not authenticated");
 
-    const users = await ctx.db.query("users").collect();
-
-    return users;
+    return await ctx.db.query("users").paginate(args.paginationOpts);
   },
 });
 

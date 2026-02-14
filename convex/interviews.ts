@@ -1,8 +1,11 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+import { paginationOptsValidator } from "convex/server";
+
 export const getAllInterviews = query({
-  handler: async (ctx) => {
+  args: { paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) throw new Error("Unauthorized");
 
@@ -15,9 +18,7 @@ export const getAllInterviews = query({
       throw new Error("Forbidden: Interviewer role required");
     }
 
-    const interviews = await ctx.db.query("interviews").collect();
-
-    return interviews;
+    return await ctx.db.query("interviews").paginate(args.paginationOpts);
   },
 });
 
