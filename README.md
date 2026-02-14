@@ -3,9 +3,9 @@
 # V-Sync
 ### *A high-performance Remote Technical Interview Platform.*
 
-**🌐 Live Demo:** [vedio-sync.netlify.app](https://vedio-sync.netlify.app/)
+** Live Demo:** [vedio-sync.netlify.app](https://vedio-sync.netlify.app/)
 
-#### 🔐 Interviewer Access (Demo)
+####  Interviewer Access (Demo)
 - **Email:** `interviewer112233@gmail.com`
 - **Password:** `interviewer@123`
 

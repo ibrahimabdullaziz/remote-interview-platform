@@ -19,7 +19,6 @@ function Navbar() {
           </span>
         </Link>
 
-        {/* RIGHT SIDE ACTIONS */}
         <div className="flex items-center space-x-4 ml-auto">
           <ModeToggle />
           <SignedIn>

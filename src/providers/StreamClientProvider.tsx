@@ -5,11 +5,12 @@ import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
 import { LoaderUI } from "@/components/common";
 import { streamTokenProvider } from "@/actions/stream.actions";
+import { handleUnknownError, getErrorMessage, type AppError } from "@/lib/errorHandler";
 
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [streamVideoClient, setStreamVideoClient] =
     useState<StreamVideoClient>();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<AppError | null>(null);
   const { user, isLoaded } = useUser();
 
   useEffect(() => {
@@ -30,35 +31,21 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
           image: user.imageUrl,
         },
         tokenProvider: async () => {
-          try {
-            const token = await streamTokenProvider();
-            console.log("Token generated successfully for user:", user.id);
-            return token;
-          } catch (e) {
-            console.error("Token generation failed:", e);
-            throw e;
-          }
+          const token = await streamTokenProvider();
+          return token;
         },
       });
-
-      console.log("Initializing StreamVideoClient for user:", user.id);
 
       setStreamVideoClient(client);
       setError(null);
     } catch (e) {
-      console.error("Failed to initialize StreamVideoClient", e);
-      setError(
-        "We couldn't initialize the video client. Please refresh the page or try again later.",
-      );
+      const appError = handleUnknownError(e);
+      setError(appError);
     }
 
     return () => {
       if (client) {
-        client
-          .disconnectUser()
-          .catch((e) =>
-            console.error("Failed to disconnect StreamVideoClient", e),
-          );
+        client.disconnectUser().catch((e) => handleUnknownError(e));
       }
       setStreamVideoClient(undefined);
     };
@@ -68,7 +55,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <p className="max-w-md text-center text-sm text-muted-foreground">
-          {error}
+          {getErrorMessage(error)}
         </p>
       </div>
     );
