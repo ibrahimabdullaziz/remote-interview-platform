@@ -9,13 +9,15 @@ import { useEffect, useState } from "react";
 import { handleUnknownError } from "@/lib/errors";
 
 function RecordingsPage() {
-  const { calls, isLoading } = useGetCalls();
+  const { calls, isLoading: isCallsLoading } = useGetCalls();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
+  const [isFetchingRecordings, setIsFetchingRecordings] = useState(false);
 
   useEffect(() => {
     const fetchRecordings = async () => {
-      if (!calls) return;
+      if (!calls || calls.length === 0) return;
 
+      setIsFetchingRecordings(true);
       try {
         // Get recordings for each call
         const callData = await Promise.all(
@@ -26,13 +28,15 @@ function RecordingsPage() {
         setRecordings(allRecordings);
       } catch (error) {
         handleUnknownError(error);
+      } finally {
+        setIsFetchingRecordings(false);
       }
     };
 
     fetchRecordings();
   }, [calls]);
 
-  if (isLoading) {
+  if (isCallsLoading || isFetchingRecordings) {
     return (
       <div className="container max-w-7xl mx-auto p-6">
         <Skeleton className="h-8 w-40 mb-4" />

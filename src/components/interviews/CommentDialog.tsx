@@ -36,7 +36,11 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
   const [rating, setRating] = useState("3");
 
   const addComment = useMutation(api.comments.addComment);
-  const users = useQuery(api.users.getUsers);
+  const { results: users, status: usersStatus } = usePaginatedQuery(
+    api.users.getUsers,
+    {},
+    { initialNumItems: 100 },
+  );
   const existingComments = useQuery(api.comments.getComments, { interviewId });
 
   const handleSubmit = async () => {
@@ -47,7 +51,7 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
         await addComment({
           interviewId,
           content: comment.trim(),
-          rating: parseInt(rating),
+          rating: parseInt(rating) as 1 | 2 | 3 | 4 | 5,
         });
 
         toast.success("Comment submitted");
@@ -56,7 +60,7 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
         setIsOpen(false);
       },
       "CONVEX_MUTATION_FAILED",
-      { interviewId }
+      { interviewId },
     );
   };
 
@@ -71,7 +75,12 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
     </div>
   );
 
-  if (existingComments === undefined || users === undefined) return null;
+  if (
+    existingComments === undefined ||
+    usersStatus === "LoadingFirstPage" ||
+    !users
+  )
+    return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -105,14 +114,14 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
               {/* DISPLAY EXISTING COMMENTS */}
               <ScrollArea className="h-[240px]">
                 <div className="space-y-4">
-                  {existingComments.map((comment, index) => {
+                  {existingComments.map((comment) => {
                     const interviewer = getInterviewerInfo(
                       users,
                       comment.interviewerId,
                     );
                     return (
                       <div
-                        key={index}
+                        key={comment._id}
                         className="rounded-lg border p-4 space-y-3"
                       >
                         <div className="flex items-center justify-between">
@@ -151,9 +160,9 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
           <div className="space-y-4">
             {/* RATING */}
             <div className="space-y-2">
-              <Label>Rating</Label>
+              <Label htmlFor="rating">Rating</Label>
               <Select value={rating} onValueChange={setRating}>
-                <SelectTrigger>
+                <SelectTrigger id="rating" aria-label="Select rating">
                   <SelectValue placeholder="Select rating" />
                 </SelectTrigger>
                 <SelectContent>
@@ -170,8 +179,9 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
 
             {/* COMMENT */}
             <div className="space-y-2">
-              <Label>Your Comment</Label>
+              <Label htmlFor="comment-text">Your Comment</Label>
               <Textarea
+                id="comment-text"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 placeholder="Share your detailed comment about the candidate..."
@@ -193,4 +203,3 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
   );
 }
 export default CommentDialog;
-

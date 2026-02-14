@@ -1,9 +1,16 @@
 import Link from "next/link";
 import { ModeToggle } from "./ModeToggle";
-import { CodeIcon } from "lucide-react";
+import { CodeIcon, MenuIcon } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { DashboardBtn } from "@/components/dashboard";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 function Navbar() {
   return (
@@ -19,11 +26,12 @@ function Navbar() {
           </span>
         </Link>
 
-        <div className="flex items-center space-x-4 ml-auto">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-4 ml-auto">
           <ModeToggle />
           <SignedIn>
             <DashboardBtn />
-            <UserButton />
+            <UserButton afterSignOutUrl="/" />
           </SignedIn>
 
           <SignedOut>
@@ -32,8 +40,46 @@ function Navbar() {
             </SignInButton>
           </SignedOut>
         </div>
+
+        {/* Mobile Navigation */}
+        <div className="flex md:hidden items-center space-x-2 ml-auto">
+          <ModeToggle />
+          <SignedIn>
+            <UserButton afterSignOutUrl="/" />
+          </SignedIn>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Open Menu">
+                <MenuIcon className="size-6" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[300px] h-full rounded-none right-0 left-auto translate-x-0 p-6 flex flex-col">
+              <DialogHeader className="text-left border-b pb-4 mb-4">
+                <DialogTitle>Menu</DialogTitle>
+              </DialogHeader>
+              <div className="flex flex-col gap-4">
+                <SignedIn>
+                  <Link
+                    href="/schedule"
+                    className="text-lg font-medium hover:text-emerald-500 transition-colors"
+                  >
+                    Schedule Interview
+                  </Link>
+                  <DashboardBtn />
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <Button className="w-full">Sign In</Button>
+                  </SignInButton>
+                </SignedOut>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
     </nav>
   );
 }
+
 export default Navbar;
