@@ -8,12 +8,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon, CheckCircle2Icon, ClockIcon, XCircleIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  CheckCircle2Icon,
+  ClockIcon,
+  XCircleIcon,
+} from "lucide-react";
 import { CommentDialog } from "@/components/interviews";
 import { INTERVIEW_CATEGORY } from "@/constants";
 import { getCandidateInfo, groupInterviews } from "@/lib/utils";
 import { useMutation, useQuery } from "convex/react";
-import { api } from "../../../../../convex/_generated/api"
+import { api } from "../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -25,10 +30,11 @@ export function InterviewList() {
   const users = useQuery(api.users.getUsers);
   const interviews = useQuery(api.interviews.getAllInterviews);
   const updateStatus = useMutation(api.interviews.updateInterviewStatus);
+  const removeInterview = useMutation(api.interviews.deleteInterview);
 
   const handleStatusUpdate = async (
     interviewId: Id<"interviews">,
-    status: string,
+    status: "upcoming" | "completed" | "succeeded" | "failed",
   ) => {
     await withErrorHandling(
       async () => {
@@ -36,11 +42,24 @@ export function InterviewList() {
         toast.success(`Interview marked as ${status}`);
       },
       "CONVEX_MUTATION_FAILED",
-      { interviewId, status }
+      { interviewId, status },
     );
   };
 
-  if (!interviews || !users) return null; // Logic handled in parent or loading state
+  const handleDelete = async (id: Id<"interviews">) => {
+    if (!confirm("Are you sure you want to delete this interview?")) return;
+
+    await withErrorHandling(
+      async () => {
+        await removeInterview({ id });
+        toast.success("Interview deleted");
+      },
+      "CONVEX_MUTATION_FAILED",
+      { interviewId: id },
+    );
+  };
+
+  if (!interviews || !users) return null;
 
   const groupedInterviews = groupInterviews(interviews);
 
@@ -112,11 +131,9 @@ export function InterviewList() {
                             <div className="flex gap-2 w-full">
                               <Button
                                 className="flex-1"
+                                aria-label="Pass Candidate"
                                 onClick={() =>
-                                  handleStatusUpdate(
-                                    interview._id,
-                                    "succeeded",
-                                  )
+                                  handleStatusUpdate(interview._id, "succeeded")
                                 }
                               >
                                 <CheckCircle2Icon className="h-4 w-4 mr-2" />
@@ -125,6 +142,7 @@ export function InterviewList() {
                               <Button
                                 variant="destructive"
                                 className="flex-1"
+                                aria-label="Fail Candidate"
                                 onClick={() =>
                                   handleStatusUpdate(interview._id, "failed")
                                 }
@@ -134,7 +152,19 @@ export function InterviewList() {
                               </Button>
                             </div>
                           )}
-                          <CommentDialog interviewId={interview._id} />
+                          <div className="flex gap-2 w-full">
+                            <CommentDialog interviewId={interview._id} />
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="text-muted-foreground hover:text-destructive"
+                              title="Delete Interview"
+                              aria-label="Delete Interview"
+                              onClick={() => handleDelete(interview._id)}
+                            >
+                              <XCircleIcon className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </CardFooter>
                       </Card>
                     );

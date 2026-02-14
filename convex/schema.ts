@@ -15,7 +15,12 @@ export default defineSchema({
     description: v.optional(v.string()),
     startTime: v.number(),
     endTime: v.optional(v.number()),
-    status: v.string(),
+    status: v.union(
+      v.literal("upcoming"),
+      v.literal("completed"),
+      v.literal("succeeded"),
+      v.literal("failed"),
+    ),
     streamCallId: v.string(),
     candidateId: v.string(),
     interviewerIds: v.array(v.string()),
@@ -25,7 +30,13 @@ export default defineSchema({
 
   comments: defineTable({
     content: v.string(),
-    rating: v.number(),
+    rating: v.union(
+      v.literal(1),
+      v.literal(2),
+      v.literal(3),
+      v.literal(4),
+      v.literal(5),
+    ),
     interviewerId: v.string(),
     interviewId: v.id("interviews"),
   }).index("by_interview_id", ["interviewId"]),

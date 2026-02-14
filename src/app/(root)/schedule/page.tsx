@@ -3,6 +3,7 @@
 import { LoaderUI } from "@/components/common";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import InterviewScheduleUI from "./InterviewScheduleUI";
 
 function SchedulePage() {
@@ -10,8 +11,14 @@ function SchedulePage() {
 
   const { isInterviewer, isLoading } = useUserRole();
 
+  useEffect(() => {
+    if (!isLoading && !isInterviewer) {
+      router.push("/");
+    }
+  }, [isLoading, isInterviewer, router]);
+
   if (isLoading) return <LoaderUI />;
-  if (!isInterviewer) return router.push("/");
+  if (!isInterviewer) return null;
 
   return <InterviewScheduleUI />;
 }

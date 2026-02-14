@@ -6,12 +6,23 @@ import { DashboardSkeleton } from "@/components/skeletons/DashboardSkeleton";
 import { Header } from "./_components/Header";
 import { InterviewList } from "./_components/InterviewList";
 
-function DashboardPage() {
-  const users = useQuery(api.users.getUsers);
-  const interviews = useQuery(api.interviews.getAllInterviews);
+import { useUserRole } from "@/hooks/useUserRole";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { LoaderUI } from "@/components/common";
 
-  if (!interviews || !users) {
-    return <DashboardSkeleton />;
+function DashboardPage() {
+  const router = useRouter();
+  const { isInterviewer, isLoading } = useUserRole();
+
+  useEffect(() => {
+    if (!isLoading && !isInterviewer) {
+      router.push("/");
+    }
+  }, [isLoading, isInterviewer, router]);
+
+  if (isLoading || !isInterviewer) {
+    return <LoaderUI />;
   }
 
   return (

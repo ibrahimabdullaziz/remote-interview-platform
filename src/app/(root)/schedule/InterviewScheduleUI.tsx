@@ -164,8 +164,11 @@ function InterviewScheduleUI() {
             <div className="space-y-4 py-4">
               {/* INTERVIEW TITLE */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Title</label>
+                <label htmlFor="title" className="text-sm font-medium">
+                  Title
+                </label>
                 <Input
+                  id="title"
                   placeholder="Interview title"
                   value={formData.title}
                   onChange={(e) =>
@@ -176,8 +179,11 @@ function InterviewScheduleUI() {
 
               {/* INTERVIEW DESC */}
               <div className="space-y-2">
-                <label className="text-sm font-medium">Description</label>
+                <label htmlFor="description" className="text-sm font-medium">
+                  Description
+                </label>
                 <Textarea
+                  id="description"
                   placeholder="Interview description"
                   value={formData.description}
                   onChange={(e) =>
@@ -226,6 +232,7 @@ function InterviewScheduleUI() {
                         <button
                           onClick={() => removeInterviewer(interviewer.clerkId)}
                           className="hover:text-destructive transition-colors"
+                          aria-label={`Remove ${interviewer.name}`}
                         >
                           <XIcon className="h-4 w-4" />
                         </button>
@@ -317,7 +324,7 @@ function InterviewScheduleUI() {
           <Loader2Icon className="size-8 animate-spin text-muted-foreground" />
         </div>
       ) : interviews.length > 0 ? (
-        <div className="spacey-4">
+        <div className="space-y-4">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {interviews.map((interview) => (
               <MeetingCard key={interview._id} interview={interview} />
