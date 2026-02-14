@@ -19,7 +19,6 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: unknown, errorInfo: unknown) {
-    // In production you could send this to an error reporting service
     console.error("ErrorBoundary caught error", error, errorInfo);
   }
 

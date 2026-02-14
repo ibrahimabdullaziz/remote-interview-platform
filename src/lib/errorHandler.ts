@@ -373,10 +373,10 @@ export function getErrorMessage(error: AppError | string): string {
  */
 export function getErrorSeverityClass(severity: ErrorSeverity): string {
   const classMap = {
-    [ErrorSeverity.INFO]: "bg-blue-50 text-blue-800 border-blue-200",
-    [ErrorSeverity.WARNING]: "bg-yellow-50 text-yellow-800 border-yellow-200",
-    [ErrorSeverity.ERROR]: "bg-red-50 text-red-800 border-red-200",
-    [ErrorSeverity.CRITICAL]: "bg-purple-50 text-purple-800 border-purple-200",
+    [ErrorSeverity.INFO]: "bg-blue-50 dark:bg-blue-950 text-blue-900 dark:text-blue-100 border-blue-200 dark:border-blue-800",
+    [ErrorSeverity.WARNING]: "bg-yellow-50 dark:bg-yellow-950 text-yellow-900 dark:text-yellow-100 border-yellow-200 dark:border-yellow-800",
+    [ErrorSeverity.ERROR]: "bg-red-50 dark:bg-red-950 text-red-900 dark:text-red-100 border-red-200 dark:border-red-800",
+    [ErrorSeverity.CRITICAL]: "bg-purple-50 dark:bg-purple-950 text-purple-900 dark:text-purple-100 border-purple-200 dark:border-purple-800",
   };
   return classMap[severity];
 }

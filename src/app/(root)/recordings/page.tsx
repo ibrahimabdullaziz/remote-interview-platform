@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import useGetCalls from "@/hooks/useGetCalls";
 import { CallRecording } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
+import { handleUnknownError } from "@/lib/errorHandler";
 
 function RecordingsPage() {
   const { calls, isLoading } = useGetCalls();
@@ -24,7 +25,7 @@ function RecordingsPage() {
 
         setRecordings(allRecordings);
       } catch (error) {
-        console.log("Error fetching recordings:", error);
+        handleUnknownError(error);
       }
     };
 

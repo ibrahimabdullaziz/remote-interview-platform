@@ -14,13 +14,12 @@ const useMeetingActions = () => {
       return;
     }
 
+    let call;
     try {
       const id = crypto.randomUUID();
-      const call = client.call("default", id);
+      call = client.call("default", id);
 
       if (!call) throw new Error("Failed to create call object");
-
-      console.log("Creating meeting with ID:", id);
 
       await call.getOrCreate({
         data: {
@@ -46,8 +45,10 @@ const useMeetingActions = () => {
   };
 
   const joinMeeting = (callId: string) => {
-    if (!client)
-      return toast.error("Failed to join meeting. Please try again.");
+    if (!client) {
+      const error = createError("STREAM_CONNECTION_FAILED");
+      return toast.error(error.userMessage);
+    }
     router.push(`/meeting/${callId}`);
   };
 

@@ -6,6 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { LoaderUI } from "@/components/common";
 import { streamTokenProvider } from "@/actions/stream.actions";
 import { handleUnknownError, getErrorMessage, type AppError } from "@/lib/errorHandler";
+import { ErrorDisplay } from "@/components/common/ErrorDisplay";
 
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [streamVideoClient, setStreamVideoClient] =
@@ -52,13 +53,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   }, [user?.id, isLoaded]);
 
   if (error) {
-    return (
-      <div className="flex min-h-screen items-center justify-center px-4">
-        <p className="max-w-md text-center text-sm text-muted-foreground">
-          {getErrorMessage(error)}
-        </p>
-      </div>
-    );
+    return <ErrorDisplay error={error} />;
   }
 
   if (!streamVideoClient) return <LoaderUI />;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { handleUnknownError } from "@/lib/errorHandler";
 
 const useGetCalls = () => {
   const { user } = useUser();
@@ -28,7 +29,7 @@ const useGetCalls = () => {
 
         setCalls(calls);
       } catch (error) {
-        console.error(error);
+        handleUnknownError(error);
       } finally {
         setIsLoading(false);
       }
