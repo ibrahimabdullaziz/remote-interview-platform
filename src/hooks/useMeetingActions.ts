@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import toast from "react-hot-toast";
@@ -7,7 +8,7 @@ const useMeetingActions = () => {
   const router = useRouter();
   const client = useStreamVideoClient();
 
-  const createInstantMeeting = async () => {
+  const createInstantMeeting = useCallback(async () => {
     if (!client) {
       const error = createError("STREAM_CONNECTION_FAILED");
       toast.error(error.userMessage);
@@ -21,6 +22,7 @@ const useMeetingActions = () => {
 
       if (!call) throw new Error("Failed to create call object");
 
+      
       await call.getOrCreate({
         data: {
           starts_at: new Date().toISOString(),
@@ -36,21 +38,23 @@ const useMeetingActions = () => {
       router.push(`/meeting/${call.id}`);
       toast.success("Meeting Created");
     } catch (error) {
+     
       await withErrorHandling(
         async () => { throw error; },
         "STREAM_CONNECTION_FAILED",
-        { meetingId: call?.id }
+        { meetingId: call?.id, timestamp: new Date().toISOString() }
       );
     }
-  };
+  }, [client, router]);
 
-  const joinMeeting = (callId: string) => {
+  
+  const joinMeeting = useCallback((callId: string) => {
     if (!client) {
       const error = createError("STREAM_CONNECTION_FAILED");
       return toast.error(error.userMessage);
     }
     router.push(`/meeting/${callId}`);
-  };
+  }, [client, router]);
 
   return { createInstantMeeting, joinMeeting };
 };

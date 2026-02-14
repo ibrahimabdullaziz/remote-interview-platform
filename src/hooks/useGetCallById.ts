@@ -9,15 +9,20 @@ const useGetCallById = (id: string | string[]) => {
   const client = useStreamVideoClient();
 
   useEffect(() => {
-    if (!client) return;
+    if (!client || !id) return;
 
     const getCall = async () => {
+      setIsCallLoading(true); 
       try {
         const { calls } = await client.queryCalls({
           filter_conditions: { id },
         });
 
-        if (calls.length > 0) setCall(calls[0]);
+        if (calls.length > 0) {
+          setCall(calls[0]);
+        } else {
+          setCall(undefined);
+        }
       } catch (error) {
         handleUnknownError(error);
         setCall(undefined);
@@ -27,7 +32,7 @@ const useGetCallById = (id: string | string[]) => {
     };
 
     getCall();
-  }, [client, id]);
+  }, [client, JSON.stringify(id)]);
 
   return { call, isCallLoading };
 };
