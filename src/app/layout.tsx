@@ -7,16 +7,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import Navbar from "@/layout/Navbar";
 import ConvexClerkProvider from "@/providers/ConvexClerkProvider";
 import { Toaster } from "react-hot-toast";
-import { errorHandler, ErrorBoundary } from "@/lib/errors";
-import toast from "react-hot-toast";
-
-// Configure global error handling
-errorHandler.config = {
-  logErrors: process.env.NODE_ENV === "development",
-  onError: (error) => {
-    toast.error(error.userMessage);
-  },
-};
+import { ErrorBoundary } from "@/lib/errors";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

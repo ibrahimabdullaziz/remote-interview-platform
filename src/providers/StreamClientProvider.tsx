@@ -11,6 +11,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
     useState<StreamVideoClient>();
   const { user, isLoaded } = useUser();
   const clientRef = useRef<StreamVideoClient | null>(null);
+  const initializedUserIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!isLoaded || !user) return;
@@ -18,6 +19,12 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
     let isMounted = true;
 
     const initClient = async () => {
+      // Prevent re-initialization if client already exists for this user
+      if (clientRef.current && initializedUserIdRef.current === user.id) {
+        if (isMounted) setStreamVideoClient(clientRef.current);
+        return;
+      }
+
       try {
         const client = StreamVideoClient.getOrCreateInstance({
           apiKey: process.env.NEXT_PUBLIC_STREAM_API_KEY!,
@@ -33,6 +40,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
         });
 
         clientRef.current = client;
+        initializedUserIdRef.current = user.id;
 
         if (isMounted) {
           setStreamVideoClient(client);
@@ -46,11 +54,13 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
 
     return () => {
       isMounted = false;
+      // Thorough cleanup without recursive loops
       if (clientRef.current) {
         clientRef.current.disconnectUser();
         clientRef.current = null;
-        setStreamVideoClient(undefined);
+        initializedUserIdRef.current = null;
       }
+      setStreamVideoClient(undefined);
     };
   }, [user?.id, isLoaded]);
 

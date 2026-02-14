@@ -36,11 +36,14 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
   const [rating, setRating] = useState("3");
 
   const addComment = useMutation(api.comments.addComment);
-  const { results: users, status: usersStatus } = usePaginatedQuery(
+  const paginatedUsers = usePaginatedQuery(
     api.users.getUsers,
     {},
     { initialNumItems: 100 },
   );
+
+  const users = paginatedUsers?.results ?? [];
+  const usersStatus = paginatedUsers?.status ?? "LoadingFirstPage";
   const existingComments = useQuery(api.comments.getComments, { interviewId });
 
   const handleSubmit = async () => {
@@ -78,7 +81,7 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
   if (
     existingComments === undefined ||
     usersStatus === "LoadingFirstPage" ||
-    !users
+    !paginatedUsers
   )
     return null;
 

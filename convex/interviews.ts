@@ -3,6 +3,25 @@ import { v } from "convex/values";
 
 import { paginationOptsValidator } from "convex/server";
 
+// Stability-safe non-paginated query
+export const getAllInterviewsList = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Unauthorized");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (user?.role !== "interviewer") {
+      throw new Error("Forbidden: Interviewer role required");
+    }
+
+    return await ctx.db.query("interviews").collect();
+  },
+});
+
 export const getAllInterviews = query({
   args: { paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {
@@ -60,6 +79,7 @@ export const createInterview = mutation({
     startTime: v.number(),
     status: v.union(
       v.literal("upcoming"),
+      v.literal("live"),
       v.literal("completed"),
       v.literal("succeeded"),
       v.literal("failed"),
@@ -92,6 +112,7 @@ export const updateInterviewStatus = mutation({
     id: v.id("interviews"),
     status: v.union(
       v.literal("upcoming"),
+      v.literal("live"),
       v.literal("completed"),
       v.literal("succeeded"),
       v.literal("failed"),

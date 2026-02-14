@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,7 +19,7 @@ import {
 import { CommentDialog } from "@/components/interviews";
 import { INTERVIEW_CATEGORY } from "@/constants";
 import { getCandidateInfo, groupInterviews } from "@/lib/utils";
-import { useMutation, usePaginatedQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { format } from "date-fns";
@@ -27,17 +29,13 @@ import { DashboardSkeleton } from "@/components/skeletons/DashboardSkeleton";
 
 type Interview = Doc<"interviews">;
 
+/**
+ * DEFINITIVE STABILITY FIX:
+ * 1. Uses stability-safe queries (non-paginated) to avoid usePaginatedQuery crashes.
+ */
 export function InterviewList() {
-  const { results: users, status: usersStatus } = usePaginatedQuery(
-    api.users.getUsers,
-    {},
-    { initialNumItems: 20 },
-  );
-  const { results: interviews, status: interviewsStatus } = usePaginatedQuery(
-    api.interviews.getAllInterviews,
-    {},
-    { initialNumItems: 20 },
-  );
+  const users = useQuery(api.users.getAllUsers);
+  const interviews = useQuery(api.interviews.getAllInterviewsList);
 
   const updateStatus = useMutation(api.interviews.updateInterviewStatus);
   const removeInterview = useMutation(api.interviews.deleteInterview);
@@ -69,16 +67,16 @@ export function InterviewList() {
     );
   };
 
-  if (
-    usersStatus === "LoadingFirstPage" ||
-    interviewsStatus === "LoadingFirstPage"
-  ) {
+  const isLoading = users === undefined || interviews === undefined;
+
+  if (isLoading) {
     return <DashboardSkeleton />;
   }
 
-  if (!interviews || !users) return null;
+  const safeUsers = users ?? [];
+  const safeInterviews = interviews ?? [];
 
-  const groupedInterviews = groupInterviews(interviews);
+  const groupedInterviews = groupInterviews(safeInterviews);
 
   return (
     <div className="space-y-8">
@@ -86,7 +84,6 @@ export function InterviewList() {
         (category) =>
           (groupedInterviews[category.id]?.length ?? 0) > 0 && (
             <section key={category.id}>
-              {/* CATEGORY TITLE */}
               <div className="flex items-center gap-2 mb-4">
                 <h2 className="text-xl font-semibold">{category.title}</h2>
                 <Badge variant={category.variant}>
@@ -98,7 +95,7 @@ export function InterviewList() {
                 {(groupedInterviews[category.id] ?? []).map(
                   (interview: Interview) => {
                     const candidateInfo = getCandidateInfo(
-                      users,
+                      safeUsers,
                       interview.candidateId,
                     );
                     const startTime = new Date(interview.startTime);
@@ -108,7 +105,6 @@ export function InterviewList() {
                         key={interview._id}
                         className="hover:shadow-md transition-all"
                       >
-                        {/* CANDIDATE INFO */}
                         <CardHeader className="p-4">
                           <div className="flex items-center gap-3">
                             <Avatar className="h-10 w-10">
@@ -128,7 +124,6 @@ export function InterviewList() {
                           </div>
                         </CardHeader>
 
-                        {/* DATE &  TIME */}
                         <CardContent className="p-4">
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
@@ -142,7 +137,6 @@ export function InterviewList() {
                           </div>
                         </CardContent>
 
-                        {/* PASS & FAIL BUTTONS */}
                         <CardFooter className="p-4 pt-0 flex flex-col gap-3">
                           {interview.status === "completed" && (
                             <div className="flex gap-2 w-full">

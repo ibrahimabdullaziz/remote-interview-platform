@@ -26,12 +26,17 @@ export function InterviewerSelector({
   onRemove,
   currentUserId,
 }: InterviewerSelectorProps) {
-  const selectedInterviewers = (availableInterviewers ?? []).filter((i) =>
-    selectedIds.includes(i.clerkId),
+  const safeAvailable = Array.isArray(availableInterviewers)
+    ? availableInterviewers
+    : [];
+  const safeSelected = Array.isArray(selectedIds) ? selectedIds : [];
+
+  const selectedInterviewers = safeAvailable.filter((i) =>
+    safeSelected.includes(i.clerkId),
   );
 
-  const selectableInterviewers = (availableInterviewers ?? []).filter(
-    (i) => !selectedIds.includes(i.clerkId),
+  const selectableInterviewers = safeAvailable.filter(
+    (i) => !safeSelected.includes(i.clerkId),
   );
 
   return (
@@ -66,7 +71,7 @@ export function InterviewerSelector({
             <SelectValue placeholder="Add interviewer" />
           </SelectTrigger>
           <SelectContent>
-            {selectableInterviewers.map((interviewer) => (
+            {selectableInterviewers?.map((interviewer) => (
               <SelectItem key={interviewer.clerkId} value={interviewer.clerkId}>
                 <UserInfo user={interviewer} />
               </SelectItem>

@@ -48,6 +48,16 @@ export const updateUser = mutation({
 
 import { paginationOptsValidator } from "convex/server";
 
+// Stability-safe non-paginated query
+export const getAllUsers = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("User is not authenticated");
+
+    return await ctx.db.query("users").collect();
+  },
+});
+
 export const getUsers = query({
   args: { paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {

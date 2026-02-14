@@ -41,19 +41,27 @@ const useGetCalls = () => {
   const now = useMemo(() => new Date(), []);
 
   const endedCalls = useMemo(() => {
-    return calls.filter(({ state: { startsAt, endedAt } }: Call) => {
+    if (!calls) return [];
+    return calls.filter((call: Call) => {
+      const startsAt = call.state?.startsAt;
+      const endedAt = call.state?.endedAt;
       return (startsAt && new Date(startsAt) < now) || !!endedAt;
     });
   }, [calls, now]);
 
   const upcomingCalls = useMemo(() => {
-    return calls.filter(({ state: { startsAt } }: Call) => {
+    if (!calls) return [];
+    return calls.filter((call: Call) => {
+      const startsAt = call.state?.startsAt;
       return startsAt && new Date(startsAt) > now;
     });
   }, [calls, now]);
 
   const liveCalls = useMemo(() => {
-    return calls.filter(({ state: { startsAt, endedAt } }: Call) => {
+    if (!calls) return [];
+    return calls.filter((call: Call) => {
+      const startsAt = call.state?.startsAt;
+      const endedAt = call.state?.endedAt;
       return startsAt && new Date(startsAt) < now && !endedAt;
     });
   }, [calls, now]);

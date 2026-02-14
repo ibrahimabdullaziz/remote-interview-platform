@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
-import { useMutation } from "convex/react";
-import { api } from "@convex/api";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
 import toast from "react-hot-toast";
 import {
   Dialog,
@@ -27,30 +27,35 @@ import { UserInfo } from "@/components/common";
 import { Loader2Icon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { TIME_SLOTS } from "@/constants";
-import { Doc } from "@convex/dataModel";
 import { InterviewerSelector } from "./InterviewerSelector";
 import { withErrorHandling } from "@/lib/errors";
 
 interface ScheduleDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  users: Doc<"users">[];
 }
 
-export function ScheduleDialog({
-  open,
-  onOpenChange,
-  users,
-}: ScheduleDialogProps) {
+export function ScheduleDialog({ open, onOpenChange }: ScheduleDialogProps) {
   const client = useStreamVideoClient();
   const { user } = useUser();
   const [isCreating, setIsCreating] = useState(false);
   const createInterview = useMutation(api.interviews.createInterview);
 
-  const candidates = users?.filter((u) => u.role === "candidate") ?? [];
-  const allInterviewers = users?.filter((u) => u.role === "interviewer") ?? [];
+  // Using the new stability-safe query
+  const users = useQuery(api.users.getAllUsers);
 
-  const [formData, setFormData] = useState(() => {
+  const safeUsers = Array.isArray(users) ? users : [];
+  const candidates = safeUsers.filter((u) => u.role === "candidate");
+  const allInterviewers = safeUsers.filter((u) => u.role === "interviewer");
+
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    date: Date;
+    time: string;
+    candidateId: string;
+    interviewerIds: string[];
+  }>(() => {
     const now = new Date();
     now.setHours(now.getHours() + 1, 0, 0, 0);
     const defaultTime = `${now.getHours().toString().padStart(2, "0")}:00`;
@@ -61,8 +66,15 @@ export function ScheduleDialog({
       date: new Date(),
       time: defaultTime,
       candidateId: "",
-      interviewerIds: user?.id ? [user.id] : [],
+      interviewerIds: [],
     };
+  });
+
+  // Safe side effect to set default interviewer
+  useState(() => {
+    if (user?.id && formData.interviewerIds.length === 0) {
+      setFormData((prev) => ({ ...prev, interviewerIds: [user.id] }));
+    }
   });
 
   const handleSchedule = async () => {
@@ -126,7 +138,7 @@ export function ScheduleDialog({
         date: new Date(),
         time: resetTime,
         candidateId: "",
-        interviewerIds: user?.id ? [user.id] : [],
+        interviewerIds: [user?.id || ""].filter(Boolean),
       });
     }, "CONVEX_MUTATION_FAILED");
 
@@ -143,133 +155,138 @@ export function ScheduleDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
-          {/* TITLE */}
-          <div className="space-y-2">
-            <label htmlFor="title" className="text-sm font-medium">
-              Title
-            </label>
-            <Input
-              id="title"
-              placeholder="Interview title"
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-            />
+        {users === undefined ? (
+          <div className="flex justify-center py-12">
+            <Loader2Icon className="size-8 animate-spin text-muted-foreground" />
           </div>
-
-          {/* DESCRIPTION */}
-          <div className="space-y-2">
-            <label htmlFor="description" className="text-sm font-medium">
-              Description
-            </label>
-            <Textarea
-              id="description"
-              placeholder="Interview description"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              rows={3}
-            />
-          </div>
-
-          {/* CANDIDATE */}
-          <div className="space-y-2">
-            <label htmlFor="candidate" className="text-sm font-medium">
-              Candidate
-            </label>
-            <Select
-              value={formData.candidateId}
-              onValueChange={(candidateId) =>
-                setFormData({ ...formData, candidateId })
-              }
-            >
-              <SelectTrigger id="candidate">
-                <SelectValue placeholder="Select candidate" />
-              </SelectTrigger>
-              <SelectContent>
-                {candidates.map((candidate) => (
-                  <SelectItem key={candidate.clerkId} value={candidate.clerkId}>
-                    <UserInfo user={candidate} />
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* INTERVIEWERS */}
-          <InterviewerSelector
-            selectedIds={formData.interviewerIds}
-            availableInterviewers={allInterviewers}
-            onAdd={(id) =>
-              setFormData((prev) => ({
-                ...prev,
-                interviewerIds: [...prev.interviewerIds, id],
-              }))
-            }
-            onRemove={(id) =>
-              setFormData((prev) => ({
-                ...prev,
-                interviewerIds: prev.interviewerIds.filter((i) => i !== id),
-              }))
-            }
-            currentUserId={user?.id}
-          />
-
-          {/* DATE & TIME */}
-          <div className="flex flex-col gap-4 sm:flex-row">
+        ) : (
+          <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Date</label>
-              <Calendar
-                mode="single"
-                selected={formData.date}
-                onSelect={(date) => date && setFormData({ ...formData, date })}
-                disabled={(date) => date < new Date()}
-                className="rounded-md border"
+              <label htmlFor="title" className="text-sm font-medium">
+                Title
+              </label>
+              <Input
+                id="title"
+                placeholder="Interview title"
+                value={formData.title}
+                onChange={(e) =>
+                  setFormData({ ...formData, title: e.target.value })
+                }
               />
             </div>
 
-            <div className="space-y-2 flex-1">
-              <label htmlFor="time" className="text-sm font-medium">
-                Time
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium">
+                Description
+              </label>
+              <Textarea
+                id="description"
+                placeholder="Interview description"
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="candidate" className="text-sm font-medium">
+                Candidate
               </label>
               <Select
-                value={formData.time}
-                onValueChange={(time) => setFormData({ ...formData, time })}
+                value={formData.candidateId}
+                onValueChange={(candidateId) =>
+                  setFormData({ ...formData, candidateId })
+                }
               >
-                <SelectTrigger id="time">
-                  <SelectValue placeholder="Select time" />
+                <SelectTrigger id="candidate">
+                  <SelectValue placeholder="Select candidate" />
                 </SelectTrigger>
                 <SelectContent>
-                  {TIME_SLOTS.map((time) => (
-                    <SelectItem key={time} value={time}>
-                      {time}
+                  {candidates.map((candidate) => (
+                    <SelectItem
+                      key={candidate.clerkId}
+                      value={candidate.clerkId}
+                    >
+                      <UserInfo user={candidate} />
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
-          </div>
 
-          {/* ACTIONS */}
-          <div className="flex justify-end gap-3 pt-4">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSchedule} disabled={isCreating}>
-              {isCreating ? (
-                <>
-                  <Loader2Icon className="mr-2 size-4 animate-spin" />
-                  Scheduling...
-                </>
-              ) : (
-                "Schedule Interview"
-              )}
-            </Button>
+            <InterviewerSelector
+              selectedIds={formData.interviewerIds}
+              availableInterviewers={allInterviewers}
+              onAdd={(id) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  interviewerIds: [...prev.interviewerIds, id],
+                }))
+              }
+              onRemove={(id) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  interviewerIds: prev.interviewerIds.filter((i) => i !== id),
+                }))
+              }
+              currentUserId={user?.id}
+            />
+
+            <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Date</label>
+                <Calendar
+                  mode="single"
+                  selected={formData.date}
+                  onSelect={(date) =>
+                    date && setFormData({ ...formData, date })
+                  }
+                  disabled={(date) => date < new Date()}
+                  className="rounded-md border"
+                />
+              </div>
+
+              <div className="space-y-2 flex-1">
+                <label htmlFor="time" className="text-sm font-medium">
+                  Time
+                </label>
+                <Select
+                  value={formData.time}
+                  onValueChange={(time) => setFormData({ ...formData, time })}
+                >
+                  <SelectTrigger id="time">
+                    <SelectValue placeholder="Select time" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_SLOTS.map((time) => (
+                      <SelectItem key={time} value={time}>
+                        {time}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4">
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSchedule} disabled={isCreating}>
+                {isCreating ? (
+                  <>
+                    <Loader2Icon className="mr-2 size-4 animate-spin" />
+                    Scheduling...
+                  </>
+                ) : (
+                  "Schedule Interview"
+                )}
+              </Button>
+            </div>
           </div>
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   );

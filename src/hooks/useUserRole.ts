@@ -7,7 +7,7 @@ export const useUserRole = () => {
 
   const userData = useQuery(
     api.users.getUserByClerkId,
-    user?.id ? { clerkId: user.id } : "skip"
+    user?.id ? { clerkId: user.id } : "skip",
   );
 
   const isLoading = !isClerkLoaded || userData === undefined;

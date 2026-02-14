@@ -17,6 +17,7 @@ export default defineSchema({
     endTime: v.optional(v.number()),
     status: v.union(
       v.literal("upcoming"),
+      v.literal("live"),
       v.literal("completed"),
       v.literal("succeeded"),
       v.literal("failed"),

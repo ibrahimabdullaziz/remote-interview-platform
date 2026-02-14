@@ -8,7 +8,9 @@ interface MeetingListProps {
 }
 
 export function MeetingList({ interviews }: MeetingListProps) {
-  if (interviews.length === 0) {
+  const safeInterviews = Array.isArray(interviews) ? interviews : [];
+
+  if (safeInterviews.length === 0) {
     return (
       <div className="text-center py-12 text-muted-foreground">
         No interviews scheduled
@@ -19,7 +21,7 @@ export function MeetingList({ interviews }: MeetingListProps) {
   return (
     <div className="space-y-4">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {interviews.map((interview) => (
+        {safeInterviews.map((interview) => (
           <MeetingCard key={interview._id} interview={interview} />
         ))}
       </div>
