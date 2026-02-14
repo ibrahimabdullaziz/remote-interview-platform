@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, useQuery, usePaginatedQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
 import { withErrorHandling } from "@/lib/errors";

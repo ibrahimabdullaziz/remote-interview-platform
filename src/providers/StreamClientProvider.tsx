@@ -5,17 +5,10 @@ import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-sdk";
 import { useUser } from "@clerk/nextjs";
 import { LoaderUI } from "@/components/common";
 import { streamTokenProvider } from "@/actions/stream.actions";
-import {
-  handleUnknownError,
-  getErrorMessage,
-  ErrorDisplay,
-  type AppError,
-} from "@/lib/errors";
 
 const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
   const [streamVideoClient, setStreamVideoClient] =
     useState<StreamVideoClient>();
-  const [error, setError] = useState<AppError | null>(null);
   const { user, isLoaded } = useUser();
 
   useEffect(() => {
@@ -40,11 +33,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
       client.disconnectUser();
       setStreamVideoClient(undefined);
     };
-  }, [user?.id, isLoaded]);
-
-  if (error) {
-    return <ErrorDisplay error={error} />;
-  }
+  }, [user, isLoaded]); // Added 'user' to dependency array to handle re-initialization if user data updates.
 
   if (!streamVideoClient) return <LoaderUI />;
 

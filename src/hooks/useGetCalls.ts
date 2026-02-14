@@ -38,7 +38,7 @@ const useGetCalls = () => {
     loadCalls();
   }, [client, user?.id]);
 
-  const now = new Date();
+  const now = useMemo(() => new Date(), []);
 
   const endedCalls = useMemo(() => {
     return calls.filter(({ state: { startsAt, endedAt } }: Call) => {
