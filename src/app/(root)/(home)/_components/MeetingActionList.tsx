@@ -8,6 +8,9 @@ const MeetingModal = dynamic(
   () => import("@/components/meetings/MeetingModal"),
   {
     ssr: false,
+    loading: () => (
+      <div className="h-[400px] w-full bg-gray-100 animate-pulse rounded-lg" />
+    ),
   },
 );
 
@@ -32,7 +35,6 @@ export function MeetingActionList() {
         break;
       default:
         router.push(`/${title.toLowerCase()}`);
-        // Keep loading state until navigation occurs
     }
   };
 

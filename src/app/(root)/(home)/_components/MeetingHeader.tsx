@@ -1,8 +1,4 @@
-import { useUserRole } from "@/hooks/useUserRole";
-
-export function MeetingHeader() {
-  const { isInterviewer } = useUserRole();
-
+export function MeetingHeader({ isInterviewer }: { isInterviewer: boolean }) {
   return (
     <div className="rounded-lg bg-card p-6 border shadow-sm mb-10">
       <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">

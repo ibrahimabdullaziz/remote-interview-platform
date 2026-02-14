@@ -1,13 +1,23 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { LoaderUI } from "@/components/common";
 import { ErrorBoundary, ErrorDisplay, createError } from "@/lib/errors";
-import { MeetingRoom, MeetingSetup } from "@/components/meetings";
+import { DashboardSkeleton } from "@/components/skeletons/DashboardSkeleton";
 import useGetCallById from "@/hooks/useGetCallById";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
+
+const MeetingSetup = dynamic(
+  () => import("@/components/meetings/MeetingSetup"),
+  { ssr: false, loading: () => <DashboardSkeleton /> },
+);
+const MeetingRoom = dynamic(() => import("@/components/meetings/MeetingRoom"), {
+  ssr: false,
+  loading: () => <DashboardSkeleton />,
+});
 
 function MeetingPage() {
   const router = useRouter();
@@ -56,4 +66,3 @@ function MeetingPage() {
   );
 }
 export default MeetingPage;
-
