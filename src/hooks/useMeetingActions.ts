@@ -1,6 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import toast from "react-hot-toast";
+import { withErrorHandling, createError } from "@/lib/errorHandler";
 
 const useMeetingActions = () => {
   const router = useRouter();
@@ -8,7 +9,8 @@ const useMeetingActions = () => {
 
   const createInstantMeeting = async () => {
     if (!client) {
-      toast.error("Video client not initialized");
+      const error = createError("STREAM_CONNECTION_FAILED");
+      toast.error(error.userMessage);
       return;
     }
 
@@ -35,8 +37,11 @@ const useMeetingActions = () => {
       router.push(`/meeting/${call.id}`);
       toast.success("Meeting Created");
     } catch (error) {
-      console.error("Meeting creation error:", error);
-      toast.error("Failed to create meeting. Please try again.");
+      await withErrorHandling(
+        async () => { throw error; },
+        "STREAM_CONNECTION_FAILED",
+        { meetingId: call?.id }
+      );
     }
   };
 

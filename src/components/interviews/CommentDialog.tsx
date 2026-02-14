@@ -3,6 +3,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
+import { withErrorHandling } from "@/lib/errorHandler";
 import { MessageSquareIcon, StarIcon } from "lucide-react";
 import {
   Dialog,
@@ -41,21 +42,22 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
   const handleSubmit = async () => {
     if (!comment.trim()) return toast.error("Please enter comment");
 
-    try {
-      await addComment({
-        interviewId,
-        content: comment.trim(),
-        rating: parseInt(rating),
-      });
+    await withErrorHandling(
+      async () => {
+        await addComment({
+          interviewId,
+          content: comment.trim(),
+          rating: parseInt(rating),
+        });
 
-      toast.success("Comment submitted");
-      setComment("");
-      setRating("3");
-      setIsOpen(false);
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to submit comment");
-    }
+        toast.success("Comment submitted");
+        setComment("");
+        setRating("3");
+        setIsOpen(false);
+      },
+      "CONVEX_MUTATION_FAILED",
+      { interviewId }
+    );
   };
 
   const renderStars = (rating: number) => (

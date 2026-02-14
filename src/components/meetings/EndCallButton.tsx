@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import { withErrorHandling } from "@/lib/errorHandler";
 
 function EndCallButton() {
   const call = useCall();
@@ -26,20 +27,21 @@ function EndCallButton() {
   if (!isMeetingOwner) return null;
 
   const endCall = async () => {
-    try {
-      await call.endCall();
+    await withErrorHandling(
+      async () => {
+        await call.endCall();
 
-      await updateInterviewStatus({
-        id: interview._id,
-        status: "completed",
-      });
+        await updateInterviewStatus({
+          id: interview._id,
+          status: "completed",
+        });
 
-      router.push("/");
-      toast.success("Meeting ended for everyone");
-    } catch (error) {
-      console.log(error);
-      toast.error("Failed to end meeting");
-    }
+        router.push("/");
+        toast.success("Meeting ended for everyone");
+      },
+      "CONVEX_MUTATION_FAILED",
+      { interviewId: interview._id, callId: call.id }
+    );
   };
 
   return (

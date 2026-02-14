@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Call, useStreamVideoClient } from "@stream-io/video-react-sdk";
+import { handleUnknownError } from "@/lib/errorHandler";
 
 const useGetCallById = (id: string | string[]) => {
   const [call, setCall] = useState<Call>();
@@ -18,7 +19,7 @@ const useGetCallById = (id: string | string[]) => {
 
         if (calls.length > 0) setCall(calls[0]);
       } catch (error) {
-        console.error(error);
+        handleUnknownError(error);
         setCall(undefined);
       } finally {
         setIsCallLoading(false);

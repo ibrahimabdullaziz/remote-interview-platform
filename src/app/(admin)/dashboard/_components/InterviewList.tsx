@@ -17,6 +17,7 @@ import { api } from "../../../../../convex/_generated/api"
 import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
+import { withErrorHandling } from "@/lib/errorHandler";
 
 type Interview = Doc<"interviews">;
 
@@ -29,12 +30,14 @@ export function InterviewList() {
     interviewId: Id<"interviews">,
     status: string,
   ) => {
-    try {
-      await updateStatus({ id: interviewId, status });
-      toast.success(`Interview marked as ${status}`);
-    } catch {
-      toast.error("Failed to update status");
-    }
+    await withErrorHandling(
+      async () => {
+        await updateStatus({ id: interviewId, status });
+        toast.success(`Interview marked as ${status}`);
+      },
+      "CONVEX_MUTATION_FAILED",
+      { interviewId, status }
+    );
   };
 
   if (!interviews || !users) return null; // Logic handled in parent or loading state
