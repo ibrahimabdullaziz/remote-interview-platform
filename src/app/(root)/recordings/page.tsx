@@ -7,6 +7,8 @@ import useGetCalls from "@/hooks/useGetCalls";
 import { CallRecording } from "@stream-io/video-react-sdk";
 import { useEffect, useState } from "react";
 import { handleUnknownError } from "@/lib/errors";
+import { EmptyState } from "@/components/common/EmptyState";
+import { VideoIcon } from "lucide-react";
 
 function RecordingsPage() {
   const { calls, isLoading: isCallsLoading } = useGetCalls();
@@ -66,9 +68,11 @@ function RecordingsPage() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-[400px] gap-4">
-            <p className="text-xl font-medium text-muted-foreground">
-              No recordings available
-            </p>
+            <EmptyState
+              title="No recordings found"
+              description="You don't have any recordings for your past meetings."
+              icon={VideoIcon}
+            />
           </div>
         )}
       </ScrollArea>

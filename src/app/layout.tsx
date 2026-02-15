@@ -7,6 +7,7 @@ import Navbar from "@/layout/Navbar";
 import ConvexClerkProvider from "@/providers/ConvexClerkProvider";
 import { Toaster } from "react-hot-toast";
 import { ErrorBoundary } from "@/lib/errors";
+import { LoaderProvider } from "@/providers/LoaderProvider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -41,11 +42,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <LoaderProvider />
             <ErrorBoundary>
               <SignedIn>
                 <div className="min-h-screen">
                   <Navbar />
-                  <main className="px-4 sm:px-6 lg:px-8">{children}</main>
+                  <main id="main-content" className="px-4 sm:px-6 lg:px-8">
+                    {children}
+                  </main>
                 </div>
               </SignedIn>
 

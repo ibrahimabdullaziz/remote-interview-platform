@@ -1,25 +1,22 @@
-"use client";
-
-import { LoaderUI } from "@/components/common";
-import { useUserRole } from "@/hooks/useUserRole";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { currentUser } from "@clerk/nextjs/server";
+import { convexClient } from "@/lib/convex";
+import { api } from "../../../../convex/_generated/api";
+import { redirect } from "next/navigation";
 import InterviewScheduleUI from "./InterviewScheduleUI";
 
-function SchedulePage() {
-  const router = useRouter();
+async function SchedulePage() {
+  const user = await currentUser();
+  if (!user) redirect("/");
 
-  const { isInterviewer, isLoading } = useUserRole();
+  const userData = await convexClient.query(api.users.getUserByClerkId, {
+    clerkId: user.id,
+  });
 
-  useEffect(() => {
-    if (!isLoading && !isInterviewer) {
-      router.push("/");
-    }
-  }, [isLoading, isInterviewer, router]);
-
-  if (isLoading) return <LoaderUI />;
-  if (!isInterviewer) return null;
+  if (!userData || userData.role !== "interviewer") {
+    redirect("/");
+  }
 
   return <InterviewScheduleUI />;
 }
+
 export default SchedulePage;

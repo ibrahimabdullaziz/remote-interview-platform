@@ -1,24 +1,20 @@
-"use client";
-
+import { currentUser } from "@clerk/nextjs/server";
+import { convexClient } from "@/lib/convex";
+import { api } from "../../../../convex/_generated/api";
+import { redirect } from "next/navigation";
 import { Header } from "./_components/Header";
 import { InterviewList } from "./_components/InterviewList";
-import { useUserRole } from "@/hooks/useUserRole";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { LoaderUI } from "@/components/common";
 
-function DashboardPage() {
-  const router = useRouter();
-  const { isInterviewer, isLoading } = useUserRole();
+async function DashboardPage() {
+  const user = await currentUser();
+  if (!user) redirect("/");
 
-  useEffect(() => {
-    if (!isLoading && !isInterviewer) {
-      router.push("/");
-    }
-  }, [isLoading, isInterviewer, router]);
+  const userData = await convexClient.query(api.users.getUserByClerkId, {
+    clerkId: user.id,
+  });
 
-  if (isLoading || !isInterviewer) {
-    return <LoaderUI />;
+  if (!userData || userData.role !== "interviewer") {
+    redirect("/");
   }
 
   return (

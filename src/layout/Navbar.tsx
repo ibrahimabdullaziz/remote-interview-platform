@@ -15,6 +15,12 @@ import {
 function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <a
+        href="#main-content"
+        className="absolute left-[-9999px] top-4 z-[100] bg-background p-4 text-foreground shadow-lg transition-transform focus:left-4 focus:translate-y-0"
+      >
+        Skip to main content
+      </a>
       <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
         <Link
           href="/"

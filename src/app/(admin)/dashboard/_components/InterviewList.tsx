@@ -1,5 +1,7 @@
 "use client";
 
+import { EmptyState } from "@/components/common/EmptyState";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -83,6 +85,18 @@ export function InterviewList() {
   const safeInterviews = interviews ?? [];
 
   const groupedInterviews = groupInterviews(safeInterviews);
+
+  if (safeInterviews.length === 0) {
+    return (
+      <EmptyState
+        title="No Interviews Configured"
+        description="You haven't scheduled any interviews yet."
+        actionLabel="Schedule New Interview"
+        actionLink="/schedule"
+        icon={CalendarIcon}
+      />
+    );
+  }
 
   return (
     <div className="space-y-8">

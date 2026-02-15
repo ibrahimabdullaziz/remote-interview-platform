@@ -82,7 +82,12 @@ function MeetingRoom() {
                 <div className="flex items-center gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon" className="size-10">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="size-10"
+                        aria-label="Change Layout"
+                      >
                         <LayoutListIcon className="size-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -101,6 +106,7 @@ function MeetingRoom() {
                     size="icon"
                     className="size-10"
                     onClick={() => setShowParticipants(!showParticipants)}
+                    aria-label="Toggle Participants"
                   >
                     <UsersIcon className="size-4" />
                   </Button>

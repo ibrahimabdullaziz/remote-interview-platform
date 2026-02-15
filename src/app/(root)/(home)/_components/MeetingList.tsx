@@ -5,6 +5,8 @@ import { MeetingListSkeleton } from "@/components/skeletons/MeetingListSkeleton"
 import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 import { Doc } from "../../../../../convex/_generated/dataModel";
+import { EmptyState } from "@/components/common/EmptyState";
+import { CalendarIcon } from "lucide-react";
 
 export function MeetingList() {
   const interviews = useQuery(api.interviews.getMyInterviews);
@@ -30,9 +32,13 @@ export function MeetingList() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-muted-foreground">
-            You have no scheduled interviews at the moment
-          </div>
+          <EmptyState
+            title="No Scheduled Interviews"
+            description="You have no upcoming interviews."
+            actionLabel="Schedule Interview"
+            actionLink="/schedule"
+            icon={CalendarIcon}
+          />
         )}
       </div>
     </>
