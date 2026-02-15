@@ -1,6 +1,7 @@
 import { useCall, useCallStateHooks } from "@stream-io/video-react-sdk";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
+import { updateInterviewStatusAction } from "@/actions/interview.actions";
 import { api } from "../../../convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
@@ -11,10 +12,6 @@ function EndCallButton() {
   const router = useRouter();
   const { useLocalParticipant } = useCallStateHooks();
   const localParticipant = useLocalParticipant();
-
-  const updateInterviewStatus = useMutation(
-    api.interviews.updateInterviewStatus,
-  );
 
   const interview = useQuery(api.interviews.getInterviewByStreamCallId, {
     streamCallId: call?.id || "",
@@ -31,7 +28,7 @@ function EndCallButton() {
       async () => {
         await call.endCall();
 
-        await updateInterviewStatus({
+        await updateInterviewStatusAction({
           id: interview._id,
           status: "completed",
         });
@@ -40,7 +37,7 @@ function EndCallButton() {
         toast.success("Meeting ended for everyone");
       },
       "CONVEX_MUTATION_FAILED",
-      { interviewId: interview._id, callId: call.id }
+      { interviewId: interview._id, callId: call.id },
     );
   };
 
@@ -51,4 +48,3 @@ function EndCallButton() {
   );
 }
 export default EndCallButton;
-

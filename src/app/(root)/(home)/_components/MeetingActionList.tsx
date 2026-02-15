@@ -54,12 +54,14 @@ export function MeetingActionList() {
         ))}
       </div>
 
-      <MeetingModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title={modalType === "join" ? "Join Meeting" : "Start Meeting"}
-        isJoinMeeting={modalType === "join"}
-      />
+      {showModal && (
+        <MeetingModal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          title={modalType === "join" ? "Join Meeting" : "Start Meeting"}
+          isJoinMeeting={modalType === "join"}
+        />
+      )}
     </>
   );
 }

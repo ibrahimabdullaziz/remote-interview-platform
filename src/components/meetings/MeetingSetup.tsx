@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DeviceSettings,
   useCall,
@@ -15,14 +17,13 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isMicDisabled, setIsMicDisabled] = useState(false);
   const [isDeviceReady, setIsDeviceReady] = useState(false);
   const [deviceError, setDeviceError] = useState<string | null>(null);
+  const [isJoining, setIsJoining] = useState(false); // حماية ضد الضغط المتكرر
 
   const call = useCall();
 
-  // Wait for call to be ready before allowing device operations
   useEffect(() => {
     if (!call) return;
 
-    // Add a small delay to ensure SDK's device manager is initialized
     const timer = setTimeout(() => {
       setIsDeviceReady(true);
     }, 500);
@@ -33,46 +34,22 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   useEffect(() => {
     if (!call || !isDeviceReady) return;
 
-    const updateCamera = async () => {
+    const updateDevices = async () => {
       try {
-        if (isCameraDisabled) {
-          await call.camera.disable();
-        } else {
-          await call.camera.enable();
-        }
+        if (isCameraDisabled) await call.camera.disable();
+        else await call.camera.enable();
+
+        if (isMicDisabled) await call.microphone.disable();
+        else await call.microphone.enable();
+
         setDeviceError(null);
       } catch (error) {
-        console.error("Camera operation failed:", error);
-        setDeviceError(
-          "We couldn't access your camera. Check your browser permissions and device settings.",
-        );
+        console.error("Device sync failed:", error);
       }
     };
 
-    updateCamera();
-  }, [isCameraDisabled, call, isDeviceReady]);
-
-  useEffect(() => {
-    if (!call || !isDeviceReady) return;
-
-    const updateMicrophone = async () => {
-      try {
-        if (isMicDisabled) {
-          await call.microphone.disable();
-        } else {
-          await call.microphone.enable();
-        }
-        setDeviceError(null);
-      } catch (error) {
-        console.error("Microphone operation failed:", error);
-        setDeviceError(
-          "We couldn't access your microphone. Check your browser permissions and device settings.",
-        );
-      }
-    };
-
-    updateMicrophone();
-  }, [isMicDisabled, call, isDeviceReady]);
+    updateDevices();
+  }, [isCameraDisabled, isMicDisabled, call, isDeviceReady]);
 
   if (!call) {
     return (
@@ -83,15 +60,26 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   }
 
   const handleJoin = async () => {
-    await call.join();
-    onSetupComplete();
+    if (isJoining) return;
+
+    setIsJoining(true);
+    try {
+      if (call.state.callingState !== "joined") {
+        await call.join();
+      }
+      onSetupComplete();
+    } catch (error) {
+      console.error("Error joining call:", error);
+      setDeviceError("Failed to join the meeting. Please try again.");
+      setIsJoining(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6 bg-background/95">
       <div className="w-full max-w-[1200px] mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* VIDEO PREVIEW CONTAINER */}
+          {/* VIDEO PREVIEW */}
           <Card className="md:col-span-1 p-6 flex flex-col">
             <div>
               <h1 className="text-xl font-semibold mb-1">Camera Preview</h1>
@@ -99,8 +87,6 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                 Make sure you look good!
               </p>
             </div>
-
-            {/* VIDEO PREVIEW */}
             <div className="mt-4 flex-1 min-h-[400px] rounded-xl overflow-hidden bg-muted/50 border relative">
               <div className="absolute inset-0">
                 <VideoPreview className="h-full w-full" />
@@ -108,11 +94,9 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
             </div>
           </Card>
 
-          {/* CARD CONTROLS */}
-
+          {/* CONTROLS */}
           <Card className="md:col-span-1 p-6">
             <div className="h-full flex flex-col">
-              {/* MEETING DETAILS  */}
               <div>
                 <h2 className="text-xl font-semibold mb-1">Meeting Details</h2>
                 <p className="text-sm text-muted-foreground break-all">
@@ -127,8 +111,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                   </div>
                 )}
 
-                <div className="spacey-6 mt-8">
-                  {/* CAM CONTROL */}
+                <div className="space-y-6 mt-8">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -146,11 +129,10 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                       onCheckedChange={(checked) =>
                         setIsCameraDisabled(!checked)
                       }
-                      disabled={!isDeviceReady}
+                      disabled={!isDeviceReady || isJoining}
                     />
                   </div>
 
-                  {/* MIC CONTROL */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -166,11 +148,10 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                     <Switch
                       checked={!isMicDisabled}
                       onCheckedChange={(checked) => setIsMicDisabled(!checked)}
-                      disabled={!isDeviceReady}
+                      disabled={!isDeviceReady || isJoining}
                     />
                   </div>
 
-                  {/* DEVICE SETTINGS */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -187,14 +168,17 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                   </div>
                 </div>
 
-                {/* JOIN BTN */}
                 <div className="space-y-3 mt-8">
-                  <Button className="w-full" size="lg" onClick={handleJoin}>
-                    Join Meeting
+                  <Button
+                    className="w-full"
+                    size="lg"
+                    onClick={handleJoin}
+                    disabled={isJoining}
+                  >
+                    {isJoining ? "Joining..." : "Join Meeting"}
                   </Button>
                   <p className="text-xs text-center text-muted-foreground">
-                    Do not worry, our team is super friendly! We want you to
-                    succeed.
+                    Don&apos;t worry, our team is super friendly!
                   </p>
                 </div>
               </div>

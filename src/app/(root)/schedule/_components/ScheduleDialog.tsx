@@ -5,6 +5,7 @@ import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
+import { createInterviewAction } from "@/actions/interview.actions";
 import toast from "react-hot-toast";
 import {
   Dialog,
@@ -39,7 +40,6 @@ export function ScheduleDialog({ open, onOpenChange }: ScheduleDialogProps) {
   const client = useStreamVideoClient();
   const { user } = useUser();
   const [isCreating, setIsCreating] = useState(false);
-  const createInterview = useMutation(api.interviews.createInterview);
 
   // Using the new stability-safe query
   const users = useQuery(api.users.getAllUsers);
@@ -115,7 +115,7 @@ export function ScheduleDialog({ open, onOpenChange }: ScheduleDialogProps) {
         members_limit: 10,
       });
 
-      await createInterview({
+      const result = await createInterviewAction({
         title,
         description,
         startTime: meetingDate.getTime(),
@@ -124,6 +124,8 @@ export function ScheduleDialog({ open, onOpenChange }: ScheduleDialogProps) {
         candidateId,
         interviewerIds,
       });
+
+      if (!result.success) throw new Error("Failed to create interview");
 
       onOpenChange(false);
       toast.success("Meeting scheduled successfully!");

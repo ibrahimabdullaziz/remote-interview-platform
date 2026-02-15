@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Id } from "../../../convex/_generated/dataModel";
-import { useMutation, useQuery, usePaginatedQuery } from "convex/react";
+import { useQuery, usePaginatedQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import toast from "react-hot-toast";
 import { withErrorHandling } from "@/lib/errors";
+import { addCommentAction } from "@/actions/comment.actions";
 import { MessageSquareIcon, StarIcon } from "lucide-react";
 import {
   Dialog,
@@ -35,7 +36,6 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
   const [comment, setComment] = useState("");
   const [rating, setRating] = useState("3");
 
-  const addComment = useMutation(api.comments.addComment);
   const paginatedUsers = usePaginatedQuery(
     api.users.getUsers,
     {},
@@ -51,7 +51,7 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
 
     await withErrorHandling(
       async () => {
-        await addComment({
+        await addCommentAction({
           interviewId,
           content: comment.trim(),
           rating: parseInt(rating) as 1 | 2 | 3 | 4 | 5,

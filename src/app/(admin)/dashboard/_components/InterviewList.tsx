@@ -19,8 +19,12 @@ import {
 import { CommentDialog } from "@/components/interviews";
 import { INTERVIEW_CATEGORY } from "@/constants";
 import { getCandidateInfo, groupInterviews } from "@/lib/utils";
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
+import {
+  updateInterviewStatusAction,
+  deleteInterviewAction,
+} from "@/actions/interview.actions";
 import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
@@ -37,16 +41,13 @@ export function InterviewList() {
   const users = useQuery(api.users.getAllUsers);
   const interviews = useQuery(api.interviews.getAllInterviewsList);
 
-  const updateStatus = useMutation(api.interviews.updateInterviewStatus);
-  const removeInterview = useMutation(api.interviews.deleteInterview);
-
   const handleStatusUpdate = async (
     interviewId: Id<"interviews">,
     status: "upcoming" | "completed" | "succeeded" | "failed",
   ) => {
     await withErrorHandling(
       async () => {
-        await updateStatus({ id: interviewId, status });
+        await updateInterviewStatusAction({ id: interviewId, status });
         toast.success(`Interview marked as ${status}`);
       },
       "CONVEX_MUTATION_FAILED",
@@ -59,7 +60,7 @@ export function InterviewList() {
 
     await withErrorHandling(
       async () => {
-        await removeInterview({ id });
+        await deleteInterviewAction({ id });
         toast.success("Interview deleted");
       },
       "CONVEX_MUTATION_FAILED",
