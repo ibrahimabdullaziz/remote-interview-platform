@@ -44,7 +44,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
       }
       setStreamVideoClient(undefined);
     };
-  }, [user?.id, isLoaded, user]);
+  }, [user?.id, user?.firstName, user?.username, user?.imageUrl, isLoaded]);
 
   if (!streamVideoClient) return <LoaderUI />;
 

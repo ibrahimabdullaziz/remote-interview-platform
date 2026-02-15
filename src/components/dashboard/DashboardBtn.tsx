@@ -14,10 +14,9 @@ function DashboardBtn() {
     <Link href={"/dashboard"}>
       <Button className="gap-2 font-medium" size={"sm"}>
         <SparklesIcon className="size-4" />
-        <span className="hidden sm:inline">Dashboard</span>
+        <span>Dashboard</span>
       </Button>
     </Link>
   );
 }
 export default DashboardBtn;
-
