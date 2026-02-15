@@ -6,8 +6,9 @@ import { CodeIcon, MenuIcon } from "lucide-react";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { DashboardBtn } from "@/components/dashboard";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMountTransition } from "@/hooks/useMountTransition";
+import { createPortal } from "react-dom";
 
 function Navbar() {
   return (
@@ -57,7 +58,14 @@ function Navbar() {
 
 function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const shouldRender = useMountTransition(isOpen, 300); // 300ms matches animation duration
+  const [mounted, setMounted] = useState(false);
+  const shouldRender = useMountTransition(isOpen, 300);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <>
@@ -70,54 +78,56 @@ function MobileMenu() {
         <MenuIcon className="size-6" />
       </Button>
 
-      {shouldRender && (
-        <div className="fixed inset-0 z-50 flex justify-end">
-          <div
-            className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-              isOpen ? "opacity-100" : "opacity-0"
-            }`}
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-          />
+      {shouldRender &&
+        createPortal(
+          <div className="fixed inset-0 z-[10000] flex justify-end pointer-events-auto">
+            <div
+              className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
+                isOpen ? "opacity-100" : "opacity-0"
+              }`}
+              onClick={() => setIsOpen(false)}
+              aria-hidden="true"
+            />
 
-          <div
-            className={`relative z-50 h-full w-3/4 max-w-sm bg-background border-l shadow-2xl p-6 flex flex-col gap-6 overflow-y-auto ${
-              isOpen ? "animate-slide-in-right" : "animate-slide-out-right"
-            }`}
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Menu</h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-              >
-                <CodeIcon className="size-5" />{" "}
-              </Button>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <SignedIn>
-                <Link
-                  href="/schedule"
-                  className="text-lg font-medium hover:text-emerald-500 transition-colors"
+            <div
+              className={`relative z-50 h-full w-3/4 max-w-sm bg-background border-l shadow-2xl p-6 flex flex-col gap-6 overflow-y-auto ${
+                isOpen ? "animate-slide-in-right" : "animate-slide-out-right"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold">Menu</h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsOpen(false)}
                 >
-                  Schedule Interview
-                </Link>
-                <div onClick={() => setIsOpen(false)}>
-                  <DashboardBtn />
-                </div>
-              </SignedIn>
-              <SignedOut>
-                <SignInButton mode="modal">
-                  <Button className="w-full">Sign In</Button>
-                </SignInButton>
-              </SignedOut>
+                  <CodeIcon className="size-5" />{" "}
+                </Button>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                <SignedIn>
+                  <Link
+                    href="/schedule"
+                    className="text-lg font-medium hover:text-emerald-500 transition-colors"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    Schedule Interview
+                  </Link>
+                  <div onClick={() => setIsOpen(false)}>
+                    <DashboardBtn />
+                  </div>
+                </SignedIn>
+                <SignedOut>
+                  <SignInButton mode="modal">
+                    <Button className="w-full">Sign In</Button>
+                  </SignInButton>
+                </SignedOut>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

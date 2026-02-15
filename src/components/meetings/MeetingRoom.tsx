@@ -83,16 +83,16 @@ function MeetingRoom() {
 
           <div className="absolute bottom-4 left-0 right-0 pointer-events-auto">
             <div className="flex flex-col items-center gap-4">
-              <div className="flex items-center gap-2 flex-wrap justify-center px-4 w-full">
+              <div className="flex flex-col md:flex-row items-center gap-4 p-4 rounded-3xl w-full max-w-sm md:max-w-fit mx-auto bg-background/40 backdrop-blur-md border border-white/10 shadow-lg">
                 <CallControls onLeave={() => router.push("/")} />
 
-                <div className="flex items-center gap-2 pl-2">
+                <div className="flex items-center gap-3">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
                         size="icon"
-                        className="size-10"
+                        className="size-10 rounded-full bg-background/50 hover:bg-background/80"
                         aria-label="Change Layout"
                       >
                         <LayoutListIcon className="size-4" />
@@ -111,7 +111,7 @@ function MeetingRoom() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="size-10"
+                    className="size-10 rounded-full bg-background/50 hover:bg-background/80"
                     onClick={() => setShowParticipants(!showParticipants)}
                     aria-label="Toggle Participants"
                   >
