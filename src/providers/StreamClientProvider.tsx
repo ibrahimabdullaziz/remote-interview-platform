@@ -44,6 +44,7 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
       }
       setStreamVideoClient(undefined);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, user?.firstName, user?.username, user?.imageUrl, isLoaded]);
 
   if (!streamVideoClient) return <LoaderUI />;

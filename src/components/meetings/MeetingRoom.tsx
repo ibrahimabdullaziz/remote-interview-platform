@@ -1,7 +1,6 @@
 import {
   CallControls,
   CallingState,
-  CallParticipantsList,
   PaginatedGridLayout,
   SpeakerLayout,
   useCallStateHooks,
@@ -32,6 +31,14 @@ const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
     </div>
   ),
 });
+
+const CallParticipantsList = dynamic(
+  () =>
+    import("@stream-io/video-react-sdk").then(
+      (mod) => mod.CallParticipantsList,
+    ),
+  { ssr: false },
+);
 
 function MeetingRoom() {
   const router = useRouter();

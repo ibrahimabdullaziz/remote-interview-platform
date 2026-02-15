@@ -8,11 +8,10 @@ const isPublicRoute = createRouteMatcher([
   "/api/convex(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
+export default clerkMiddleware((auth, req) => {
   // Protect all routes except public ones
   if (!isPublicRoute(req)) {
-    // يجب استخدام await هنا لأن auth() ترجع Promise
-    await auth.protect();
+    auth.protect();
   }
 });
 
