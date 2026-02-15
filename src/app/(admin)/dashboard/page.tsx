@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { Header } from "./_components/Header";
 import { InterviewList } from "./_components/InterviewList";
 
+export const dynamic = "force-dynamic";
+
 async function DashboardPage() {
   const user = await currentUser();
   if (!user) redirect("/");

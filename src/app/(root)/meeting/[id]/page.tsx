@@ -47,7 +47,7 @@ function MeetingPage() {
 
   return (
     <StreamCall call={call}>
-      <StreamTheme>
+      <StreamTheme as="main" className="stream-video-dark">
         <ErrorBoundary
           maxRetries={3}
           onReset={() => {

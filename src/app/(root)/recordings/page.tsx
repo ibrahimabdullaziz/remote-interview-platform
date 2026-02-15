@@ -10,6 +10,8 @@ import { handleUnknownError } from "@/lib/errors";
 import { EmptyState } from "@/components/common/EmptyState";
 import { VideoIcon } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 function RecordingsPage() {
   const { calls, isLoading: isCallsLoading } = useGetCalls();
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
