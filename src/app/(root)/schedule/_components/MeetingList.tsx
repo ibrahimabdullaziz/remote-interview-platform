@@ -21,8 +21,17 @@ export function MeetingList({ interviews }: MeetingListProps) {
   return (
     <div className="space-y-4">
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {safeInterviews.map((interview) => (
-          <MeetingCard key={interview._id} interview={interview} />
+        {safeInterviews.map((interview, index) => (
+          <div
+            key={interview._id}
+            className="animate-fade-in opacity-0"
+            style={{
+              animationDelay: `${index * 100}ms`,
+              animationFillMode: "forwards",
+            }}
+          >
+            <MeetingCard interview={interview} />
+          </div>
         ))}
       </div>
     </div>

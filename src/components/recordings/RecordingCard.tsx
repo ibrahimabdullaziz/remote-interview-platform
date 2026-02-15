@@ -2,7 +2,12 @@ import { CallRecording } from "@stream-io/video-react-sdk";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 import { calculateRecordingDuration } from "@/lib/utils";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { CalendarIcon, ClockIcon, CopyIcon, PlayIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -26,8 +31,7 @@ function RecordingCard({ recording }: { recording: CallRecording }) {
       : "Unknown duration";
 
   return (
-    <Card className="group hover:shadow-md transition-all">
-      {/* CARD HEADER */}
+    <Card className="group hover:shadow-md transition-all hover-lift border-primary/10">
       <CardHeader className="space-y-1">
         <div className="space-y-2">
           <div className="flex flex-col gap-1.5">
@@ -71,4 +75,3 @@ function RecordingCard({ recording }: { recording: CallRecording }) {
   );
 }
 export default RecordingCard;
-

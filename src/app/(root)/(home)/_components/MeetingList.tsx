@@ -27,8 +27,17 @@ export function MeetingList() {
       <div className="mt-8">
         {interviews.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {interviews.map((interview: Doc<"interviews">) => (
-              <MeetingCard key={interview._id} interview={interview} />
+            {interviews.map((interview: Doc<"interviews">, index: number) => (
+              <div
+                key={interview._id}
+                className="animate-fade-in opacity-0 fill-mode-forwards"
+                style={{
+                  animationDelay: `${index * 100}ms`,
+                  animationFillMode: "forwards",
+                }}
+              >
+                <MeetingCard interview={interview} />
+              </div>
             ))}
           </div>
         ) : (
