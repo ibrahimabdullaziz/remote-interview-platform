@@ -51,11 +51,13 @@ function CommentDialog({ interviewId }: { interviewId: Id<"interviews"> }) {
 
     await withErrorHandling(
       async () => {
-        await addCommentAction({
+        const result = await addCommentAction({
           interviewId,
           content: comment.trim(),
           rating: parseInt(rating) as 1 | 2 | 3 | 4 | 5,
         });
+
+        if (!result.success) throw new Error("Failed to add comment");
 
         toast.success("Comment submitted");
         setComment("");

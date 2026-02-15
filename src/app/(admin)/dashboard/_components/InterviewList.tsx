@@ -47,7 +47,11 @@ export function InterviewList() {
   ) => {
     await withErrorHandling(
       async () => {
-        await updateInterviewStatusAction({ id: interviewId, status });
+        const result = await updateInterviewStatusAction({
+          id: interviewId,
+          status,
+        });
+        if (!result.success) throw new Error("Failed to update status");
         toast.success(`Interview marked as ${status}`);
       },
       "CONVEX_MUTATION_FAILED",
@@ -60,7 +64,8 @@ export function InterviewList() {
 
     await withErrorHandling(
       async () => {
-        await deleteInterviewAction({ id });
+        const result = await deleteInterviewAction({ id });
+        if (!result.success) throw new Error("Failed to delete interview");
         toast.success("Interview deleted");
       },
       "CONVEX_MUTATION_FAILED",

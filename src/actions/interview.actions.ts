@@ -3,6 +3,7 @@
 import { api } from "../../convex/_generated/api";
 import { fetchMutation } from "convex/nextjs";
 import { Id } from "../../convex/_generated/dataModel";
+import { auth } from "@clerk/nextjs/server";
 
 export const createInterviewAction = async (args: {
   title: string;
@@ -14,9 +15,12 @@ export const createInterviewAction = async (args: {
   interviewerIds: string[];
 }) => {
   try {
+    const { getToken } = await auth();
+    const token = await getToken({ template: "convex" });
     const interviewId = await fetchMutation(
       api.interviews.createInterview,
       args,
+      { token: token || undefined },
     );
     return { success: true, interviewId };
   } catch (error) {
@@ -30,7 +34,11 @@ export const updateInterviewStatusAction = async (args: {
   status: "upcoming" | "completed" | "succeeded" | "failed";
 }) => {
   try {
-    await fetchMutation(api.interviews.updateInterviewStatus, args);
+    const { getToken } = await auth();
+    const token = await getToken({ template: "convex" });
+    await fetchMutation(api.interviews.updateInterviewStatus, args, {
+      token: token || undefined,
+    });
     return { success: true };
   } catch (error) {
     console.error("Failed to update interview status:", error);
@@ -40,7 +48,11 @@ export const updateInterviewStatusAction = async (args: {
 
 export const deleteInterviewAction = async (args: { id: Id<"interviews"> }) => {
   try {
-    await fetchMutation(api.interviews.deleteInterview, args);
+    const { getToken } = await auth();
+    const token = await getToken({ template: "convex" });
+    await fetchMutation(api.interviews.deleteInterview, args, {
+      token: token || undefined,
+    });
     return { success: true };
   } catch (error) {
     console.error("Failed to delete interview:", error);

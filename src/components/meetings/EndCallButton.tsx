@@ -28,10 +28,13 @@ function EndCallButton() {
       async () => {
         await call.endCall();
 
-        await updateInterviewStatusAction({
+        const result = await updateInterviewStatusAction({
           id: interview._id,
           status: "completed",
         });
+
+        if (!result.success)
+          throw new Error("Failed to update interview status");
 
         router.push("/");
         toast.success("Meeting ended for everyone");
