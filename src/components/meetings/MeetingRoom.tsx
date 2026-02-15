@@ -1,5 +1,4 @@
 import {
-  CallControls,
   CallingState,
   PaginatedGridLayout,
   SpeakerLayout,
@@ -45,7 +44,6 @@ const CallParticipantsList = dynamic(
 );
 
 function MeetingRoom() {
-  const router = useRouter();
   const [layout, setLayout] = useState<"grid" | "speaker">("speaker");
   const [showParticipants, setShowParticipants] = useState(false);
   const { useCallCallingState } = useCallStateHooks();

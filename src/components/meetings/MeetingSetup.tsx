@@ -87,10 +87,31 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
                 Make sure you look good!
               </p>
             </div>
-            <div className="mt-4 flex-1 min-h-[400px] rounded-xl overflow-hidden bg-muted/50 border relative">
-              <div className="absolute inset-0">
-                <VideoPreview className="h-full w-full" />
-              </div>
+            <div className="mt-4 flex-1 min-h-[400px] rounded-xl overflow-hidden bg-muted/50 border relative flex items-center justify-center">
+              {deviceError ? (
+                <div className="flex flex-col items-center justify-center gap-3 px-6 text-center text-destructive">
+                  <div className="size-20 rounded-full bg-destructive/10 flex items-center justify-center border-2 border-dashed border-destructive/30">
+                    <SettingsIcon className="size-10" />
+                  </div>
+                  <div>
+                    <p className="font-semibold">Camera Error</p>
+                    <p className="text-xs opacity-80 max-w-[200px]">
+                      {deviceError}
+                    </p>
+                  </div>
+                </div>
+              ) : isCameraDisabled ? (
+                <div className="flex flex-col items-center justify-center gap-3 text-muted-foreground animate-in fade-in duration-300">
+                  <div className="size-20 rounded-full bg-muted flex items-center justify-center border-2 border-dashed border-muted-foreground/30">
+                    <CameraIcon className="size-10" />
+                  </div>
+                  <p className="text-sm font-medium">Camera is off</p>
+                </div>
+              ) : (
+                <div className="absolute inset-0">
+                  <VideoPreview className="h-full w-full object-cover" />
+                </div>
+              )}
             </div>
           </Card>
 

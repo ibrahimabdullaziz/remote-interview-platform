@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useMountTransition } from "@/hooks/useMountTransition";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 
 function Navbar() {
   return (
@@ -22,10 +23,12 @@ function Navbar() {
       <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl">
         <Link
           href="/"
-          className="flex items-center gap-2 font-semibold text-2xl mr-6 font-mono hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 font-semibold text-2xl mr-6 hover:opacity-90 transition-opacity"
         >
-          <CodeIcon className="size-8 text-emerald-500" />
-          <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">
+          <div className="size-10 flex items-center justify-center bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 rounded-xl border border-emerald-500/20 shadow-sm">
+            <Image src="/logo.svg" alt="V-Sync Logo" className="size-8" />
+          </div>
+          <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent font-mono tracking-tight">
             V-Sync
           </span>
         </Link>
