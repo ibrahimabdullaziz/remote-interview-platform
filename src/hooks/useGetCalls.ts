@@ -38,7 +38,15 @@ const useGetCalls = () => {
     loadCalls();
   }, [client, user?.id]);
 
-  const now = useMemo(() => new Date(), []);
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNow(new Date());
+    }, 60 * 1000); // Update every minute
+
+    return () => clearInterval(interval);
+  }, []);
 
   const endedCalls = useMemo(() => {
     if (!calls) return [];

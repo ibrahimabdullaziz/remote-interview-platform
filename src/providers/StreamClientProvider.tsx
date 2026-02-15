@@ -2,6 +2,7 @@
 
 import { ReactNode, useEffect, useState, useRef } from "react";
 import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-sdk";
+import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useUser } from "@clerk/nextjs";
 import { LoaderUI } from "@/components/common";
 import { streamTokenProvider } from "@/actions/stream.actions";

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "./globals.css";
 import { RedirectToSignIn, SignedIn, SignedOut } from "@clerk/nextjs";
 import { ThemeProvider } from "@/providers/ThemeProvider";

@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import { currentUser } from "@clerk/nextjs/server";
-import { ConvexHttpClient } from "convex/browser";
+import { convexClient } from "@/lib/convex";
 import { api } from "../../../../convex/_generated/api";
 import { QuickActionsSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { MeetingHeader } from "./_components/MeetingHeader";
@@ -29,8 +29,9 @@ export default async function Home() {
   const user = await currentUser();
   if (!user) return null;
 
-  const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
-  const userData = await convex.query(api.users.getUserByClerkId, {
+  if (!user) return null;
+
+  const userData = await convexClient.query(api.users.getUserByClerkId, {
     clerkId: user.id,
   });
 
