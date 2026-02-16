@@ -1,6 +1,10 @@
 "use client";
 
-import { useCall, useCallStateHooks } from "@stream-io/video-react-sdk";
+import {
+  SfuModels,
+  useCall,
+  useCallStateHooks,
+} from "@stream-io/video-react-sdk";
 import { ScreenShareIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState } from "react";
@@ -22,7 +26,16 @@ export const CustomScreenShareButton = () => {
     setIsPending(true);
 
     try {
-      await screenShare.toggle();
+      if (amIScreenSharing) {
+        await screenShare.disable();
+        try {
+          await call.stopPublish(SfuModels.TrackType.SCREEN_SHARE);
+        } catch (e) {
+          console.debug("Explicit stopPublish info:", e);
+        }
+      } else {
+        await screenShare.enable();
+      }
     } catch (error) {
       console.error("Screen share error:", error);
       toast.error("Failed to toggle screen share");
@@ -41,8 +54,8 @@ export const CustomScreenShareButton = () => {
           : "bg-zinc-800/80 text-white hover:bg-zinc-700/90"
       }`}
       onClick={handleToggleScreenShare}
-      disabled={isPending}
-      aria-label={isSharing ? "Stop sharing" : "Share screen"}
+      disabled={isPending || (isSomeoneScreenSharing && !amIScreenSharing)}
+      aria-label={amIScreenSharing ? "Stop sharing" : "Share screen"}
     >
       <ScreenShareIcon
         className={`size-[1.125rem] ${isSharing ? "fill-current" : ""}`}

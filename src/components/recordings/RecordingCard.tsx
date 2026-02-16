@@ -8,10 +8,30 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { CalendarIcon, ClockIcon, CopyIcon, PlayIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ClockIcon,
+  CopyIcon,
+  PlayIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { deleteRecordingAction } from "@/actions/recording.actions";
+import { useRouter } from "next/navigation";
 
-function RecordingCard({ recording }: { recording: CallRecording }) {
+function RecordingCard({
+  recording,
+  callType,
+  callId,
+}: {
+  recording: CallRecording;
+  callType: string;
+  callId: string;
+}) {
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
+
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(recording.url);
@@ -47,8 +67,6 @@ function RecordingCard({ recording }: { recording: CallRecording }) {
         </div>
       </CardHeader>
 
-      {/* CARD CONTENT */}
-
       <CardContent>
         <div
           className="w-full aspect-video bg-muted/50 rounded-lg flex items-center justify-center cursor-pointer group"
@@ -65,10 +83,40 @@ function RecordingCard({ recording }: { recording: CallRecording }) {
           onClick={() => window.open(recording.url, "_blank")}
         >
           <PlayIcon className="size-4 mr-2" />
-          Play Recording
+          Play
         </Button>
-        <Button variant="secondary" onClick={handleCopyLink}>
+        <Button variant="secondary" onClick={handleCopyLink} size="icon">
           <CopyIcon className="size-4" />
+        </Button>
+        <Button
+          variant="destructive"
+          size="icon"
+          onClick={async () => {
+            if (!confirm("Are you sure you want to delete this recording?"))
+              return;
+            setIsDeleting(true);
+            try {
+              const result = await deleteRecordingAction(
+                callType,
+                callId,
+                recording.session_id,
+                recording.filename,
+              );
+              if (result.success) {
+                toast.success("Recording deleted");
+                router.refresh();
+              } else {
+                toast.error(result.error || "Failed to delete recording");
+              }
+            } catch (error) {
+              toast.error("An error occurred");
+            } finally {
+              setIsDeleting(false);
+            }
+          }}
+          disabled={isDeleting}
+        >
+          <Trash2Icon className="size-4" />
         </Button>
       </CardFooter>
     </Card>

@@ -31,7 +31,7 @@ export const createInterviewAction = async (args: {
 
 export const updateInterviewStatusAction = async (args: {
   id: Id<"interviews">;
-  status: "upcoming" | "completed" | "succeeded" | "failed";
+  status: "upcoming" | "live" | "completed" | "succeeded" | "failed";
 }) => {
   try {
     const { getToken } = await auth();

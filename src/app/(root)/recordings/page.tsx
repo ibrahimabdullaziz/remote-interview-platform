@@ -14,7 +14,9 @@ export const dynamic = "force-dynamic";
 
 function RecordingsPage() {
   const { calls, isLoading: isCallsLoading } = useGetCalls();
-  const [recordings, setRecordings] = useState<CallRecording[]>([]);
+  const [recordings, setRecordings] = useState<
+    { recording: CallRecording; callType: string; callId: string }[]
+  >([]);
   const [isFetchingRecordings, setIsFetchingRecordings] = useState(false);
 
   useEffect(() => {
@@ -26,7 +28,13 @@ function RecordingsPage() {
         const callData = await Promise.all(
           calls.map((call) => call.queryRecordings()),
         );
-        const allRecordings = callData.flatMap((call) => call.recordings);
+        const allRecordings = callData.flatMap((data, index) =>
+          data.recordings.map((recording) => ({
+            recording,
+            callType: calls[index].type,
+            callId: calls[index].id,
+          })),
+        );
 
         setRecordings(allRecordings);
       } catch (error) {
@@ -65,7 +73,12 @@ function RecordingsPage() {
         {recordings.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-6">
             {recordings.map((r) => (
-              <RecordingCard key={r.end_time} recording={r} />
+              <RecordingCard
+                key={r.recording.end_time}
+                recording={r.recording}
+                callType={r.callType}
+                callId={r.callId}
+              />
             ))}
           </div>
         ) : (

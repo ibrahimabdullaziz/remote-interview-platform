@@ -115,7 +115,6 @@ function VideoSection({
         {layout === "grid" ? <PaginatedGridLayout /> : <SpeakerLayout />}
       </div>
 
-      {/* PARTICIPANTS LIST OVERLAY - Using custom simplified list */}
       {showParticipants && (
         <div className="absolute right-0 top-0 h-full z-50 animate-in slide-in-from-right duration-300 pointer-events-auto">
           <CustomParticipantList onClose={() => setShowParticipants(false)} />
