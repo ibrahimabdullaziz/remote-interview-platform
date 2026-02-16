@@ -11,7 +11,7 @@ import {
 import { LayoutListIcon, LoaderIcon, UsersIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -24,7 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { EndCallButton } from "@/components/meetings";
+import { EndCallButton, RecordButton } from "@/components/meetings";
 
 const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
   ssr: false,
@@ -47,8 +47,20 @@ function MeetingRoom() {
   const [layout, setLayout] = useState<"grid" | "speaker">("speaker");
   const [showParticipants, setShowParticipants] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
-
   const callingState = useCallCallingState();
+
+  const [direction, setDirection] = useState<"horizontal" | "vertical">(
+    "horizontal",
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDirection(window.innerWidth < 768 ? "vertical" : "horizontal");
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (callingState !== CallingState.JOINED) {
     return (
@@ -60,11 +72,11 @@ function MeetingRoom() {
 
   return (
     <div className="h-[calc(100vh-4rem-1px)]">
-      <ResizablePanelGroup direction="horizontal" className="hidden md:flex">
+      <ResizablePanelGroup direction={direction} className="h-full">
         <ResizablePanel
-          defaultSize={35}
-          minSize={25}
-          maxSize={100}
+          defaultSize={direction === "horizontal" ? 35 : 40}
+          minSize={direction === "horizontal" ? 25 : 30}
+          maxSize={direction === "horizontal" ? 100 : 80}
           className="relative"
         >
           <VideoSection
@@ -77,25 +89,10 @@ function MeetingRoom() {
 
         <ResizableHandle withHandle />
 
-        <ResizablePanel defaultSize={65} minSize={25}>
-          <CodeEditor />
-        </ResizablePanel>
-      </ResizablePanelGroup>
-
-      {/* MOBILE VIEW */}
-      <ResizablePanelGroup direction="vertical" className="flex md:hidden">
-        <ResizablePanel defaultSize={40} minSize={30} className="relative">
-          <VideoSection
-            layout={layout}
-            setLayout={setLayout}
-            showParticipants={showParticipants}
-            setShowParticipants={setShowParticipants}
-          />
-        </ResizablePanel>
-
-        <ResizableHandle withHandle />
-
-        <ResizablePanel defaultSize={60} minSize={30}>
+        <ResizablePanel
+          defaultSize={direction === "horizontal" ? 65 : 60}
+          minSize={25}
+        >
           <CodeEditor />
         </ResizablePanel>
       </ResizablePanelGroup>
@@ -115,33 +112,30 @@ function VideoSection({
   setShowParticipants: (s: boolean) => void;
 }) {
   const router = useRouter();
+
   return (
-    <>
-      {/* VIDEO LAYOUT */}
-      <div className="absolute inset-0 pointer-events-none">
+    <div className="relative h-full w-full overflow-hidden bg-background">
+      <div className="absolute inset-0">
         {layout === "grid" ? <PaginatedGridLayout /> : <SpeakerLayout />}
 
-        {/* PARTICIPANTS LIST OVERLAY */}
         {showParticipants && (
-          <div className="absolute right-0 top-0 h-full w-[300px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 pointer-events-auto z-50">
+          <div className="absolute right-0 top-0 h-full w-[300px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 animate-in slide-in-from-right duration-300 border-l">
             <CallParticipantsList onClose={() => setShowParticipants(false)} />
           </div>
         )}
       </div>
 
-      {/* VIDEO CONTROLS */}
-      <div className="absolute bottom-4 inset-x-0 p-4 pointer-events-none flex flex-col md:flex-row gap-4 justify-center items-center">
-        <div className="flex flex-col md:flex-row gap-3 pointer-events-auto">
-          {/* PRIMARY CONTROLS (Vertical sidebar on mobile, Horizontal on desktop) */}
-          <div className="flex flex-col md:flex-row gap-3 bg-background/90 backdrop-blur-lg p-2 rounded-2xl border border-white/10 shadow-xl md:static fixed left-4 bottom-24 z-40">
+      <div className="absolute bottom-6 inset-x-0 z-40 flex justify-center items-center px-4 pointer-events-none">
+        <div className="flex flex-wrap items-center justify-center gap-3 p-3 bg-background/90 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl pointer-events-auto max-w-full">
+          <div className="flex items-center gap-2 pr-4 border-r border-white/10">
             <ToggleAudioPublishingButton />
             <ToggleVideoPublishingButton />
             <ScreenShareButton />
+            <RecordButton />
             <CancelCallButton onLeave={() => router.push("/")} />
           </div>
 
-          {/* SECONDARY CONTROLS (Horizontal pill) */}
-          <div className="flex flex-row gap-3 bg-background/90 backdrop-blur-lg p-2 rounded-full border border-white/10 shadow-xl md:static fixed bottom-4 left-1/2 -translate-x-1/2 md:translate-x-0 z-40">
+          <div className="flex items-center gap-2 pl-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -153,7 +147,7 @@ function VideoSection({
                   <LayoutListIcon className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent>
+              <DropdownMenuContent align="end">
                 <DropdownMenuItem onClick={() => setLayout("grid")}>
                   Grid View
                 </DropdownMenuItem>
@@ -177,7 +171,7 @@ function VideoSection({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 export default MeetingRoom;

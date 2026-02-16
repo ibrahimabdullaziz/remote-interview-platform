@@ -26,7 +26,13 @@ function Navbar() {
           className="flex items-center gap-3 font-semibold text-2xl mr-6 hover:opacity-90 transition-opacity"
         >
           <div className="size-10 flex items-center justify-center bg-gradient-to-br from-emerald-500/10 to-cyan-500/10 rounded-xl border border-emerald-500/20 shadow-sm">
-            <Image src="/logo.svg" alt="V-Sync Logo" className="size-8" />
+            <Image
+              src="/logo.svg"
+              alt="V-Sync Logo"
+              className="size-8"
+              width={24}
+              height={24}
+            />
           </div>
           <span className="bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent font-mono tracking-tight">
             V-Sync

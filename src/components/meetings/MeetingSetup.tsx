@@ -17,7 +17,7 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
   const [isMicDisabled, setIsMicDisabled] = useState(false);
   const [isDeviceReady, setIsDeviceReady] = useState(false);
   const [deviceError, setDeviceError] = useState<string | null>(null);
-  const [isJoining, setIsJoining] = useState(false); // حماية ضد الضغط المتكرر
+  const [isJoining, setIsJoining] = useState(false);
 
   const call = useCall();
 
@@ -115,7 +115,6 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
             </div>
           </Card>
 
-          {/* CONTROLS */}
           <Card className="md:col-span-1 p-6">
             <div className="h-full flex flex-col">
               <div>
