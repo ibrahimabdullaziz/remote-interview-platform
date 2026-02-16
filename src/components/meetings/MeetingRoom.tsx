@@ -5,7 +5,6 @@ import {
   useCallStateHooks,
   ToggleAudioPublishingButton,
   ToggleVideoPublishingButton,
-  ScreenShareButton,
   CancelCallButton,
 } from "@stream-io/video-react-sdk";
 import { LayoutListIcon, LoaderIcon, UsersIcon } from "lucide-react";
@@ -24,7 +23,12 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { EndCallButton, RecordButton } from "@/components/meetings";
+import {
+  EndCallButton,
+  RecordButton,
+  CustomScreenShareButton,
+  CustomParticipantList,
+} from "@/components/meetings";
 
 const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
   ssr: false,
@@ -34,14 +38,6 @@ const CodeEditor = dynamic(() => import("@/components/CodeEditor"), {
     </div>
   ),
 });
-
-const CallParticipantsList = dynamic(
-  () =>
-    import("@stream-io/video-react-sdk").then(
-      (mod) => mod.CallParticipantsList,
-    ),
-  { ssr: false },
-);
 
 function MeetingRoom() {
   const [layout, setLayout] = useState<"grid" | "speaker">("speaker");
@@ -117,20 +113,21 @@ function VideoSection({
     <div className="relative h-full w-full overflow-hidden bg-background">
       <div className="absolute inset-0">
         {layout === "grid" ? <PaginatedGridLayout /> : <SpeakerLayout />}
-
-        {showParticipants && (
-          <div className="absolute right-0 top-0 h-full w-[300px] bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50 animate-in slide-in-from-right duration-300 border-l">
-            <CallParticipantsList onClose={() => setShowParticipants(false)} />
-          </div>
-        )}
       </div>
+
+      {/* PARTICIPANTS LIST OVERLAY - Using custom simplified list */}
+      {showParticipants && (
+        <div className="absolute right-0 top-0 h-full z-50 animate-in slide-in-from-right duration-300 pointer-events-auto">
+          <CustomParticipantList onClose={() => setShowParticipants(false)} />
+        </div>
+      )}
 
       <div className="absolute bottom-6 inset-x-0 z-40 flex justify-center items-center px-4 pointer-events-none">
         <div className="flex flex-wrap items-center justify-center gap-3 p-3 bg-background/90 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl pointer-events-auto max-w-full">
           <div className="flex items-center gap-2 pr-4 border-r border-white/10">
             <ToggleAudioPublishingButton />
             <ToggleVideoPublishingButton />
-            <ScreenShareButton />
+            <CustomScreenShareButton />
             <RecordButton />
             <CancelCallButton onLeave={() => router.push("/")} />
           </div>

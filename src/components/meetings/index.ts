@@ -4,3 +4,5 @@ export { default as MeetingSetup } from "./MeetingSetup";
 export { default as CodeEditor } from "../CodeEditor";
 export { default as EndCallButton } from "./EndCallButton";
 export { RecordButton } from "./RecordButton";
+export { CustomScreenShareButton } from "./CustomScreenShareButton";
+export { CustomParticipantList } from "./CustomParticipantList";
