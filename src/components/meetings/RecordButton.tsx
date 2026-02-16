@@ -26,10 +26,10 @@ export const RecordButton = () => {
         await call.startRecording();
         toast.success("Recording started");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Recording error:", error);
 
-      const errorMessage = error?.message || "";
+      const errorMessage = error instanceof Error ? error.message : "";
       if (errorMessage.includes("call is already being recorded")) {
         toast.success("Recording is already in progress");
       } else if (errorMessage.includes("call is not being recorded")) {
@@ -48,7 +48,7 @@ export const RecordButton = () => {
       size="icon"
       className={`size-10 rounded-full border-none transition-all duration-300 ${
         isRecording
-          ? "bg-red-500/10 text-red-400/80 hover:bg-red-500/20 animate-pulse duration-[3000ms] shadow-[0_0_20px_rgba(239,68,68,0.05)]"
+          ? "bg-red-500/10 text-red-400/80 hover:bg-red-500/20 animate-pulse animate-duration-[3000ms] shadow-[0_0_20px_rgba(239,68,68,0.05)]"
           : "bg-zinc-800/80 text-zinc-500 hover:bg-zinc-700/90"
       }`}
       onClick={handleToggleRecording}
