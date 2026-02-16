@@ -108,7 +108,7 @@ function RecordingCard({
               } else {
                 toast.error(result.error || "Failed to delete recording");
               }
-            } catch (error) {
+            } catch {
               toast.error("An error occurred");
             } finally {
               setIsDeleting(false);
