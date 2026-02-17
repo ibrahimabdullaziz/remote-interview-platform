@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  SfuModels,
-  useCall,
-  useCallStateHooks,
-} from "@stream-io/video-react-sdk";
+import { useCall, useCallStateHooks } from "@stream-io/video-react-sdk";
 import { ScreenShareIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { useState, useEffect } from "react";
