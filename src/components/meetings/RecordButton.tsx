@@ -28,14 +28,15 @@ export const RecordButton = () => {
       }
     } catch (error) {
       console.error("Recording error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
 
-      const errorMessage = error instanceof Error ? error.message : "";
       if (errorMessage.includes("call is already being recorded")) {
-        toast.success("Recording is already in progress");
+        toast.error("Recording is already in progress");
       } else if (errorMessage.includes("call is not being recorded")) {
-        toast.success("Recording already stopped");
+        toast.error("Recording already stopped");
       } else {
-        toast.error("Failed to toggle recording");
+        toast.error("Failed to toggle recording. Please try again.");
       }
     } finally {
       setIsPending(false);

@@ -36,15 +36,24 @@ function MeetingSetup({ onSetupComplete }: { onSetupComplete: () => void }) {
 
     const updateDevices = async () => {
       try {
-        if (isCameraDisabled) await call.camera.disable();
-        else await call.camera.enable();
+        // Ensure devices are initialized before toggling
+        if (isCameraDisabled) await call.camera?.disable();
+        else await call.camera?.enable();
 
-        if (isMicDisabled) await call.microphone.disable();
-        else await call.microphone.enable();
+        if (isMicDisabled) await call.microphone?.disable();
+        else await call.microphone?.enable();
 
         setDeviceError(null);
       } catch (error) {
         console.error("Device sync failed:", error);
+        // Clean error message for user
+        const message =
+          error instanceof Error ? error.message : "Unknown device error";
+        if (message.includes("find")) {
+          // Ignore specific Stream SDK race condition error
+          return;
+        }
+        setDeviceError(message);
       }
     };
 
