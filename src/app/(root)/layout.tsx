@@ -5,7 +5,20 @@ const StreamClientProvider = dynamic(
   { ssr: false },
 );
 
+const DemoNoteModal = dynamic(
+  () =>
+    import("@/components/common/DemoNoteModal").then(
+      (mod) => mod.DemoNoteModal,
+    ),
+  { ssr: false },
+);
+
 function Layout({ children }: { children: React.ReactNode }) {
-  return <StreamClientProvider>{children}</StreamClientProvider>;
+  return (
+    <StreamClientProvider>
+      {children}
+      <DemoNoteModal />
+    </StreamClientProvider>
+  );
 }
 export default Layout;
